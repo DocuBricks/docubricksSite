@@ -1,0 +1,61 @@
+DROP TABLE docubricks_document;
+DROP TABLE docubricks_user;
+DROP TABLE docubricks_document_tags;
+DROP TABLE docubricks_document_comment;
+
+
+
+CREATE TABLE docubricks_user
+(
+  user_email 	text PRIMARY KEY,
+  user_password text NOT NULL,
+  user_name 	text NOT NULL,
+  user_surname 	text NOT NULL,
+  user_timecreated bigint NOT NULL,  
+  user_orcid 	text NOT NULL,
+  
+  user_isadmin  bool NOT NULL
+);
+
+
+
+CREATE TABLE docubricks_document
+(
+  document_id			bigint PRIMARY KEY,
+  document_timecreated	bigint NOT NULL,
+  document_xml			text NOT NULL,
+  document_owner		text not null,
+  
+  document_name			TEXT NOT NULL,
+  document_image		text NOT NULL,
+  document_desc			text NOT NULL
+);
+
+
+CREATE TABLE docubricks_document_tags
+(
+  document_id			bigint,
+  document_tag			text NOT NULL,
+  PRIMARY KEY (document_id, document_tag)
+);
+
+
+
+
+
+CREATE TABLE docubricks_document_comment
+(
+  comment_id			bigint	PRIMARY KEY,
+  document_id			bigint	NOT NULL,
+  brick_id				text	NOT NULL,
+  comment_timecreated	bigint	NOT NULL,
+  comment_user			text	NOT NULL,
+  comment_text			text	NOT NULL
+);
+
+
+
+#  CONSTRAINT docubricks_document_brick_owner_fkey FOREIGN KEY (brick_owner)
+#      REFERENCES docubricks_user (user_email) MATCH SIMPLE
+#      ON UPDATE NO ACTION ON DELETE NO ACTION
+
