@@ -70,15 +70,44 @@ public class CreateUser extends HttpServlet
 		{
 		try
 			{
+			//If creating new user: check if user exists already
+			boolean isEditing=request.getParameter("name").equals("1");
+			String newEmail=request.getParameter("email");
+			RecordUser prevuser=RecordUser.query(session.getConn(), newEmail);
+			if(isEditing)
+				{
+				//Check if allowed to edit this user
+				/*
+				if(!session.session.userEmail.equals(request.getParameter("email")))
+					{
+					JSONObject retob=new JSONObject();
+		    	retob.put("status","notallowed");
+		    	response.getWriter().append(retob.toJSONString());
+					}
+					*/
+				newEmail=prevuser.emailPrimary;  //create a new user id SEPARATE from email to allow easy updating
+				}
+			else
+				{
+				if(prevuser!=null)
+					{
+					JSONObject retob=new JSONObject();
+		    	retob.put("status","alreadyexists");
+		    	response.getWriter().append(retob.toJSONString());
+					}
+				}
+			
+			
 			RecordUser docrec=new RecordUser();
-			//docrec.allocate(session.getConn());
+			if(prevuser!=null)
+				docrec=prevuser;
 			
 			docrec.firstName=request.getParameter("name");
 			docrec.lastName=request.getParameter("surname");
-			docrec.emailPrimary=request.getParameter("email");
-			docrec.passwordHashed=encPass(request.getParameter("password"));
+			docrec.emailPrimary=newEmail;//request.getParameter("email");
+			if(!request.getParameter("password").equals(""))
+				docrec.passwordHashed=encPass(request.getParameter("password"));
 
-			//TODO check if user exists already
 			docrec.store(session.getConn());
 
 			//Log in the new user

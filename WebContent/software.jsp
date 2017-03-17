@@ -7,7 +7,7 @@
 			<p class="lead">
 				Our open source software</p>
 			<p class="lead">
-				The DocuBricks Editor</p>
+				The DocuBricks off-line Editor</p>
 			<p>
 				Our (offline) editor software helps you create a good documentation of your
 				project. It generates the required XML format for uploads to this
@@ -20,7 +20,7 @@
 			<p>	
 				Please download our free and open source (java)
 				editor software from the repository behind this link:</p>
-			<p class="lead", textcolour="red">
+			<p class="lead">
 				 <font color="#d40000">GET STARTED HERE:</font> <a href="http://www.endrov.net/temp/">DocuBricks Editor downloads</a>
 			</p>
 			<p>
@@ -31,11 +31,11 @@
 				<a href="/mypage">submit</a>.</p>
 			<p>Our software is open source. Please find the link to the source code below.</p>
 			<p class="lead">
-				<a href="https://github.com/mahogny/docubricks">DocuBricks Editor Source</a>
+				<a href="https://github.com/mahogny/docubricksEditor">DocuBricks Editor Source</a>
 			</p>
 			
-			<p class="lead">
-				Offline XML Viewer</p>
+			
+			<p class="lead">Offline XML Viewer</p>
 			<p>	
 				Projects in this repository are now rendered online, so there is no need to use the following offline
 				software. The following viewer is our first offline version and not a complete release. 
@@ -43,16 +43,19 @@
 				It can be nicely rendered with a style sheet; on top of that our viewer creates interactive
 				elements, visualises dependencies, adds lists and a total BOM.</p>
 			<p class="lead">
-				<a href="https://github.com/DocuBricks/DBViewer/tree/master/DocubricksDBViewerXML-OFF">DocuBricks
+				<a
+					href="https://github.com/DocuBricks/DBViewer/tree/master/DocubricksDBViewerXML-OFF">DocuBricks
 					Viewer </a>
+			
+			<p>Usage: Add docubricks.xsl as well as folders src and static to
+				your directory containing the documentation XML file.</p>
+			<p class="lead">
+				<a href="https://github.com/DocuBricks/DocubricksDBViewer">
+					DocuBricks Viewer (compile) </a>
+			</p>
 			<p>
-				Usage: Add docubricks.xsl as well as folders src and static to your directory
-				containing the documentation XML file. </p>	
-				<p class="lead">
-			<a href="https://github.com/DocuBricks/DocubricksDBViewer">DocuBricks
-					Viewer (compile)</a> </p>
-			<p> 
-				Our software is open source. Please find the link to the source code in the links above.</p>
+			Our software is open source. Please find the link to the source code in the links above.
+			</p>
 		</div>
 	</div>
 </div>

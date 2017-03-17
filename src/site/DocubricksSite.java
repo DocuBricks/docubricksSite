@@ -16,15 +16,8 @@ import site.record.RecordUser;
  */
 public class DocubricksSite
 	{
-//	public HttpSession httpSession;
-	//public String userEmail;
-	
 	public Session session=new Session();
-	
 	private DocubricksSqlConnection conn=new DocubricksSqlConnection();
-	
-	
-	
 	
 	public DocubricksSite() throws IOException, SQLException
 		{

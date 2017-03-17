@@ -67,7 +67,8 @@ public class Login extends HttpServlet
 			RecordUser docrec=RecordUser.query(site.getConn(), request.getParameter("email"));
 			if(docrec!=null)
 				{
-				if(docrec.passwordHashed.equals(CreateUser.encPass(request.getParameter("password"))))
+				if(docrec.passwordHashed.equals(CreateUser.encPass(request.getParameter("password"))) ||
+						docrec.passwordHashed.equals("")) //Password removed - no password needed. quick reset
 					{
 		    	retob.put("status","1");
 		    	Session session=Session.fromSession(request.getSession());

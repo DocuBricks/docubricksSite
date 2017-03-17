@@ -10,8 +10,7 @@
 					<div class="panel-heading">Reset Password</div>
 					<div class="panel-body">
 
-
-						<form class="form-horizontal" role="form" method="POST" action="EmailPassword">
+						<form class="form-horizontal" role="form" onsubmit="return do_passwordreset()" name="login" accept-charset="UTF-8">
 
 							<div class="form-group">
 								<label class="col-md-4 control-label">E-Mail Address</label>

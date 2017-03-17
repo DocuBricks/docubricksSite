@@ -22,18 +22,20 @@
 
 				<ul class="nav navbar-nav navbar-right">
 					<li>
-						<form method="GET" action="search.jsp"
-							accept-charset="UTF-8" class="navbar-form">
-							<div class="input-group">
-								<input type="text" class="form-control"
-									placeholder="Discover Projects" name="q">
-								<div class="input-group-btn">
-									<button class="btn btn-default" type="submit">
-										<i class="glyphicon glyphicon-search"></i>
-									</button>
-								</div>
-							</div>
-						</form>
+					<li><a href="search.jsp">Projects</a>
+<!-- 						<form method="GET" action="search.jsp" -->
+<!-- 							accept-charset="UTF-8" class="navbar-form"> -->
+<!-- 							<div class="input-group"> -->
+<!-- 								Discover Projects: -->
+<!-- 								<input type="text" class="form-control" -->
+<!-- 									placeholder="Discover Projects" name="q"/> -->
+<!-- 								<div class="input-group-btn"> -->
+<!-- 									<button class="btn btn-default" type="submit"> -->
+<!-- 										<i class="glyphicon glyphicon-search"></i> -->
+<!-- 									</button> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</form> -->
 					</li>
 					<li><a href="software.jsp">Software</a></li>
 					<li><a href="resources.jsp">Resources</a></li>
@@ -62,6 +64,7 @@
 							%>
 							<li><% out.println(ws2.session.userEmail==null ? "" : ws2.session.userEmail); %></li>
 							<li><a href="mypage.jsp">My projects</a></li>
+							<li><a href="edituser.jsp">Account settings</a></li>
 							<li><a onclick="return do_logout()">Logout</a></li>
 							<%
 							}

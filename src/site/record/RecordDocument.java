@@ -41,6 +41,7 @@ public class RecordDocument
 	
 	public String documentTags="";  //TODO store in database
 	
+	public String documentShortLink=""; //Allow project to be looked up as project/shortlink
 	
 	
 	public static RecordDocument query(DocubricksSqlConnection conn, long documentID) throws SQLException
@@ -68,6 +69,7 @@ public class RecordDocument
 		info.documentName=rs.getString("document_name");
 		info.documentImage=rs.getString("document_image");
 		info.documentDesc=rs.getString("document_desc");
+		info.documentShortLink=rs.getString("document_shortlink");
 		return info;
 		}
 	
@@ -86,7 +88,7 @@ public class RecordDocument
 		
 		//TODO this should be atomic so the ID is not reused in this time
 		
-		PreparedStatement stIns=conn.prepareStatement("INSERT INTO docubricks_document VALUES (?,?,?,?, ?,?,?);");
+		PreparedStatement stIns=conn.prepareStatement("INSERT INTO docubricks_document VALUES (?,?,?,?, ?,?,?,?);");
 
 		stIns.setLong  (1, id);
 		stIns.setLong  (2, timeCreated);
@@ -96,7 +98,9 @@ public class RecordDocument
 		stIns.setString(5, documentName);
 		stIns.setString(6, documentImage);
 		stIns.setString(7, documentDesc);
-		
+
+		stIns.setString(8, documentShortLink);
+
 		stIns.execute();
 		}
 	

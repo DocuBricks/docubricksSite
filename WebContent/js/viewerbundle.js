@@ -91,14 +91,12 @@ class Bom {
      * @param n Quantity
      */
     addPart(p, n) {
-        //        console.log("fff "+this.bom.get(p));
         if (n == 0)
             n = 1;
         if (this.bom.has(p))
             this.bom.set(p, this.bom.get(p) + n);
         else
             this.bom.set(p, n);
-        //        console.log("ggg "+this.bom.get(p));
     }
     addBom(b, n) {
         if (n == 0)
@@ -162,13 +160,14 @@ class Brick {
      */
     getChildBricks() {
         var referenced = new Set();
-        this.functions.forEach(function (func) {
+        //this.mapFunctions.values().forEach(function(func:BrickFunction){
+        for (let func of this.mapFunctions.values()) {
             func.implementations.forEach(function (imp) {
                 if (imp.isBrick()) {
                     referenced.add(imp.id);
                 }
             });
-        });
+        }
         return referenced;
     }
     /**
@@ -178,11 +177,13 @@ class Brick {
         Object.assign(this, o);
         this.functions = [];
         var t = this;
-        //Copy sub-bricks
+        //Copy sub-bricks and functions
         o.functions.forEach(function (ofunc, index) {
             var f = new BrickFunction();
             f.copyfrom(ofunc);
-            t.functions.push(f);
+            //t.functions.push(f);
+            f.id = "" + index;
+            t.mapFunctions.set("" + index, f);
         });
     }
 }
@@ -454,9 +455,6 @@ class DocubricksProject extends React.Component {
                     React.createElement(BomList, { proj: proj, bom: bom })));
             }
         }
-        function getQueryStringValue(key) {
-            return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
-        }
         var projectid = getQueryStringValue("id");
         var downloadlink = "DownloadZip?id=" + projectid;
         return React.createElement("div", null,
@@ -511,26 +509,87 @@ class Brick extends React.Component {
         mnodes.push(React.createElement("p", { key: brickkey + "_brickabstract", style: pStyle }, brick.abstract));
         mnodes.push(React.createElement(Files, { key: brickkey + "_files", proj: proj, files: brick.files, basekey: brickkey }));
         addField("License", brick.license);
-        addField("notes", brick.notes);
-        /////////////// authors
-        //////////////// functions & implementations
-        //The bill of materials
-        var bom = brick.getBom(proj, false);
-        if (!bom.isEmpty()) {
-            mnodes.push(React.createElement("div", null,
-                React.createElement("div", { className: "divbrickbom" },
-                    React.createElement("h3", null, "Materials for this brick")),
-                React.createElement(BomList, { proj: proj, bom: bom })));
+        addField("Notes", brick.notes);
+        //Authors
+        if (brick.authors.length != 0) {
+            var alist = "";
+            for (let a of brick.instructions) {
+                if (alist.length != 0) {
+                    alist = alist + ", " + a.name;
+                }
+                else
+                    alist = a.name;
+            }
+            addField("Authors", brick.notes);
         }
+        //Functions & implementations
+        var reqnodes = [];
+        for (let func of brick.mapFunctions.values()) {
+            var fnodes = [];
+            console.log(666);
+            console.log(fnodes);
+            for (let imp of func.implementations) {
+                var impend = "";
+                if (fnodes.length != 0)
+                    fnodes.push(React.createElement("b", null, ", "));
+                if (imp.isPart()) {
+                    var ip = imp.getPart(proj);
+                    fnodes.push(React.createElement("a", { href: "#part_" + imp.id },
+                        ip.name,
+                        " ",
+                        React.createElement("b", null,
+                            "x ",
+                            imp.quantity)));
+                }
+                else if (imp.isBrick()) {
+                    var ib = imp.getBrick(proj);
+                    fnodes.push(React.createElement("a", { href: "#brick_" + imp.id },
+                        ib.name,
+                        " ",
+                        React.createElement("b", null,
+                            "x ",
+                            imp.quantity)));
+                }
+            }
+            var desc = "";
+            if (func.description != "")
+                desc = func.description + ": ";
+            reqnodes.push(React.createElement("li", null,
+                React.createElement("b", null, desc),
+                fnodes));
+            console.log(fnodes);
+        }
+        var reqnodes2 = [];
+        if (reqnodes.length != 0) {
+            reqnodes2 = [React.createElement("div", null,
+                    React.createElement("b", null, "Requires:"),
+                    React.createElement("ul", null, reqnodes))];
+        }
+        //The bill of materials
+        /*
+        var bom:Docubricks.Bom = brick.getBom(proj,false);
+        if(!bom.isEmpty()){
+            mnodes.push(
+                    <div>
+                        <div className="divbrickbom">
+                            <h3>Materials for this brick</h3>
+                        </div>
+                        <BomList proj={proj} bom={bom}/>
+                    </div>);
+        }
+        */
         //All the instructions
+        var instrnodes = [];
         for (let instr of brick.instructions) {
-            mnodes.push(React.createElement("div", { key: brickkey + "_" + instr.name },
+            instrnodes.push(React.createElement("div", { key: brickkey + "_" + instr.name },
                 React.createElement(InstructionList, { proj: proj, brick: brick, part: null, instr: instr })));
         }
         var ret = React.createElement("div", null,
             React.createElement("div", { className: "brickdiv" },
                 React.createElement("h1", { id: "brick_" + brickid }, brick.name)),
-            mnodes);
+            mnodes,
+            reqnodes2,
+            instrnodes);
         return ret;
     }
 }
@@ -683,12 +742,17 @@ var formatURLfile = function (url, filename) {
     urlcount = urlcount + 1;
     var ret = [];
     if (url != "") {
-        ret.push(React.createElement("a", { key: "url_" + urlcount + "_" + url, href: url },
-            React.createElement("b", null,
-                "File: ",
-                filename)));
+        ret.push(React.createElement("p", { key: "url_" + urlcount + "_" + url },
+            React.createElement("a", { href: url },
+                React.createElement("b", null,
+                    "File: ",
+                    filename))));
     }
     return ret;
+};
+var getQueryStringValue = function (key) {
+    return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).
+        replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
 };
 class Files extends React.Component {
     render() {
@@ -697,8 +761,15 @@ class Files extends React.Component {
         function isImage(url) {
             return (url.toLowerCase().match(/\.(jpeg|jpg|gif|png|svg)$/) != null);
         }
+        var projectid = getQueryStringValue("id");
+        var basedir = "./project/";
+        if (projectid != "") {
+            basedir = "./project/" + projectid + "/";
+        }
+        //var downloadlink="DownloadZip?id="+projectid;
         //Collect the files and images
         var inodes = [];
+        var fnodes = [];
         for (let f of files) {
             const imgStyle = {
                 maxWidth: '300px',
@@ -706,16 +777,18 @@ class Files extends React.Component {
                 maxHeight: '300px',
                 margin: '5px'
             };
-            var imgurl = "./project/" + f.url;
+            var imgurl = basedir + f.url;
             if (isImage(imgurl)) {
                 inodes.push(React.createElement("a", { key: this.props.basekey + f.url, href: imgurl, "data-lightbox": "image" },
                     React.createElement("img", { src: imgurl, style: imgStyle })));
             }
             else {
-                inodes.push(formatURLfile(imgurl, f.url)[0]);
+                fnodes.push(formatURLfile(imgurl, f.url)[0]);
             }
         }
-        return React.createElement("div", null, inodes);
+        return React.createElement("div", null,
+            fnodes,
+            inodes);
     }
 }
 exports.Files = Files;

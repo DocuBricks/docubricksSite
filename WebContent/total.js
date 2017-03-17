@@ -21,13 +21,30 @@ do_login_resp = function(data) {
 };
 
 
+do_resetpassword = function() {
+	var req = $.getJSON("EmailPassword",
+			{email:$("#login_email").val(), password:$("#login_password").val()})
+	.done(function(data) {
+		return do_resetpassword_resp(data);
+	});
+	return false;
+};
+
+
+do_resetpassword_resp = function(data) {
+	alert("Password sent");
+	if(data.status==1)
+		alert("Password sent");
+	else
+		alert("Invalid user");
+		window.location="mypage.jsp";
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 do_logout = function() {
-//	var theform = document.forms["login"];//["fname"].value
-	//alert("whee" + JSON.stringify(theform));
 	var req = $.getJSON("Logout")
 	.done(function(data) {
 		return do_logout_resp(data);
@@ -56,6 +73,7 @@ do_register = function() {
 	}
 	else{
 		var req = $.getJSON("CreateUser",{
+			edit:"0", 
 			name:$("#register_name").val(), 
 			surname:$("#register_surname").val(), 
 			email:$("#register_email").val(), 
@@ -77,6 +95,41 @@ do_register_resp = function(data) {
 		}
 	else
 		alert("Could not create user");
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+do_edituser = function() {
+	if($("#register_password").val()!=$("#register_password_confirmation").val())
+		{
+		alert("Passwords are not matching");
+		}
+	else{
+		var req = $.getJSON("CreateUser",{
+			edit:"1", 
+			name:$("#register_name").val(), 
+			surname:$("#register_surname").val(), 
+			email:$("#register_email").val(), 
+			password:$("#register_password").val()
+		})
+		.done(function(data) {
+			return do_edituser_resp(data);
+		});
+}
+return false;
+};
+
+
+do_edituser_resp = function(data) {
+	if(data.status==1){
+		window.location="mypage.jsp";
+	}
+	else
+		alert("Could not update user");
 };
 
 
