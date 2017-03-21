@@ -3,6 +3,9 @@
 	 
 </head>
 <body>
+
+<jsp:include page="ganalytics.html" />
+
 	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container">
 			<div class="navbar-header">
@@ -14,7 +17,8 @@
 					<span class="icon-bar"></span>
 				</button>
 				<a class="pull-left logo-link" href="http://www.docubricks.com/">
-					<img width="180" src="images/db-logo-medium.png" /></a>
+					<img width="180" src="images/db-logo-medium.png" />
+				</a>
 			</div>
 
 			<div class="collapse navbar-collapse"

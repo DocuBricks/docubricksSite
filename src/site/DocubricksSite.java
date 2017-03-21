@@ -104,7 +104,11 @@ public class DocubricksSite
 		}
 
 
-
+	public RecordUser getUserInfo() throws SQLException
+		{
+		return session.getUserInfo(this);
+		}
+	
 	public void close()
 		{
 		try

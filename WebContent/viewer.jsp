@@ -14,8 +14,9 @@
     <head>
         <meta charset="UTF-8" />
         <title></title>
-        <link rel="stylesheet" href="css/docubricksViewer.css">
-        <link rel="stylesheet" href="css/lightbox.css">
+        <link rel="stylesheet" href="css/docubricks.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.9.0/css/lightbox.min.css" />
+        <link href="src/dbicon.ico" rel="icon" />
     </head>
     
     <body>
@@ -60,32 +61,16 @@
 		    
 	    
     
-        <div id="example"></div>
+        <div id="example">
+          <h1 id="loading-text">Loading...</h1>
+        </div>
         
-        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="js/react.js"></script>
         <script src="js/react-dom.js"></script>
-        
-        
-		<footer id="footer">
-			<div class="footer">
-			
-				<div class="pull-left"></div>
-				<div class="pull-right">
-					<a href="terms-and-conditions.jsp">Terms and Conditions</a> | 
-					<a href="privacy-policy.jsp">Privacy Policy</a> | &copy; 2015 <a href="/">Docubricks.com</a>
-				</div>
-	
-			</div>
-		</footer>
-	
-		<script type="text/javascript">
-			var link = document.createElement('link');
-			$('head').append('<link href="src/dbicon.ico" rel="icon">');
-		</script>
-		
 		<script src="js/viewerbundle.js"></script>
-		<script src="js/lightbox.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.9.0/js/lightbox.min.js"></script>
 		<script>
 		    lightbox.option({
 		      'resizeDuration': 200,
@@ -93,6 +78,21 @@
 		      'wrapAround': true
 		    })
 		</script>
+        
+		<jsp:include page="ganalytics.html" />
+        
+		<footer id="footer">
+			<div class="footer">
+			
+				<div class="pull-left"></div>
+				<div class="pull-right">
+					<a href="terms-and-conditions.jsp">Terms and Conditions</a> | 
+					<a href="privacy-policy.jsp">Privacy Policy</a> | &copy; 2017 <a href="/">Docubricks.com</a>
+				</div>
+	
+			</div>
+		</footer>
+	
         
     </body>
 </html>

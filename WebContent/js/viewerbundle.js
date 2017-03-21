@@ -134,7 +134,9 @@ class Brick {
      */
     getBom(proj, recursive) {
         var bom = new Bom();
-        this.functions.forEach(function (func) {
+        console.log("functions");
+        console.log(this.functions);
+        for (let func of this.mapFunctions.values()) {
             func.implementations.forEach(function (imp) {
                 if (imp.isPart()) {
                     var p = imp.getPart(proj);
@@ -152,7 +154,9 @@ class Brick {
                     console.log("bad imp type" + imp.type);
                 }
             });
-        });
+        }
+        console.log("bom");
+        console.log(bom);
         return bom;
     }
     /**
@@ -217,9 +221,10 @@ class FunctionImplementation {
         return proj.getBrickByName(this.id); //bricks[+this.id];
     }
     copyfrom(oi) {
-        this.id = oi.id;
-        this.quantity = oi.quantity;
-        this.type = oi.type;
+        Object.assign(this, oi);
+        /*this.id=oi.id;
+        this.quantity=oi.quantity;
+        this.type=oi.type;*/
     }
 }
 exports.FunctionImplementation = FunctionImplementation;
@@ -270,18 +275,23 @@ class Project {
         this.bricks = [];
         this.parts = [];
         this.authors = [];
-        this.mapBricks = new Map();
+        //    public mapBricks:Map<string,Brick>=new Map<string,Brick>();    //discards order. SHOULD use bricks[]
         this.mapParts = new Map();
         this.mapAuthors = new Map();
     }
     getBrickByName(id) {
-        var b = this.mapBricks.get(id);
-        if (b === undefined) {
-            console.error("---- no such brick \"" + id + "\"");
-            for (let i of this.mapBricks.keys())
-                console.error(i);
-        }
-        return b;
+        for (let b of this.bricks)
+            if (b.id == id)
+                return b;
+        //var b:Brick=this.mapBricks.get(id)
+        //if(b===undefined){
+        console.error("---- no such brick \"" + id + "\"");
+        console.error(this.bricks);
+        //for(let of of this.bricks)
+        //    console.error(i);
+        return null;
+        //}
+        //return b;
     }
     getPartByName(id) {
         return this.mapParts.get(id);
@@ -295,18 +305,19 @@ class Project {
     getRootBricks() {
         //See what is referenced
         var referenced = new Set();
-        for (let b of this.mapBricks.values()) {
+        //for(let b of this.mapBricks.values()){
+        for (let b of this.bricks) {
             for (let c of b.getChildBricks())
                 referenced.add(c);
         }
         //Pick unreferenced bricks as roots
         var roots = [];
-        for (let b of this.mapBricks.values())
+        for (let b of this.bricks)
             if (!referenced.has(b.id))
                 roots.push(b.id);
         //Backup: Pick anything as the root. Not great but better
         if (roots.length == 0)
-            for (let b of this.mapBricks.values()) {
+            for (let b of this.bricks) {
                 roots.push(b.id);
                 break;
             }
@@ -317,7 +328,7 @@ class Project {
         //Pick unreferenced bricks as roots
         var roots = this.getRootBricks();
         var referenced = new Set();
-        for (let b of this.mapBricks.values())
+        for (let b of this.bricks)
             if (!referenced.has(b.id))
                 thetree.push(this.getBrickTreeR(this, b, referenced));
         return thetree;
@@ -339,31 +350,28 @@ class Project {
      */
     copyfrom(o) {
         //Copy bricks
-        for (let index in o.bricks) {
-            var ob = o.bricks[index];
+        for (let ob of o.bricks) {
+            //var ob:Brick=o.bricks[index];
             var b = new Brick();
             b.copyfrom(ob);
-            var si = "" + index;
-            b.id = si;
-            this.mapBricks.set(si, b);
+            //var si:string=""+index;
+            //b.id=si;
+            this.bricks.push(b);
+            //this.mapBricks.set(si,b);
         }
         ;
         //Copy parts
-        for (let index in o.parts) {
-            var op = o.parts[index];
+        for (let op of o.parts) {
             var p = new Part();
             p.copyfrom(op);
-            p.id = "" + index;
-            this.mapParts.set(index, p);
+            this.mapParts.set(p.id, p);
         }
         ;
         //Copy authors
-        for (let index in o.authors) {
-            var oa = o.authors[index];
+        for (let oa of o.authors) {
             var a = new Author();
             a.copyfrom(oa);
-            a.id = "" + index;
-            this.mapAuthors.set(index, a);
+            this.mapAuthors.set(a.id, a);
         }
         ;
     }
@@ -413,9 +421,9 @@ class DocubricksProject extends React.Component {
         var proj = this.props.proj;
         var mnodes = [];
         for (let c of t.children) {
-            mnodes.push(React.createElement("ul", { key: "treechild_" + c.brick.id }, this.renderBrickTreeR(c)));
+            mnodes.push(React.createElement("li", { key: "treechild_" + c.brick.id }, this.renderBrickTreeR(c)));
         }
-        return React.createElement("li", { key: "treenode_" + t.brick.id },
+        return React.createElement("div", { key: "treenode_" + t.brick.id },
             React.createElement("a", { href: "#brick_" + t.brick.id }, t.brick.name),
             React.createElement("ul", null, mnodes));
     }
@@ -426,20 +434,19 @@ class DocubricksProject extends React.Component {
         var proj = this.props.proj;
         document.title = "DocuBricks - " + proj.getNameOfProject();
         var brickTree = proj.getBrickTree();
-        console.log(brickTree);
         var itemsAuthors = [];
         for (let a of proj.mapAuthors.values()) {
             itemsAuthors.push(React.createElement(Author, { key: "author_" + a.id, proj: proj, authorid: a.id }));
         }
         var itemsBricks = [];
-        for (let b of proj.mapBricks.values()) {
+        for (let b of proj.bricks) {
             itemsBricks.push(React.createElement("div", { key: b.id },
                 " ",
                 React.createElement(Brick, { proj: proj, brickid: b.id })));
         }
         var itemsParts = [];
         for (let b of proj.mapParts.values()) {
-            itemsBricks.push(React.createElement("div", { key: b.id },
+            itemsParts.push(React.createElement("div", { key: b.id },
                 " ",
                 React.createElement(Part, { proj: proj, partid: b.id })));
         }
@@ -448,42 +455,56 @@ class DocubricksProject extends React.Component {
         if (roots.length > 0) {
             var root = proj.getBrickByName(roots[0]);
             var bom = root.getBom(proj, true);
-            if (!bom.isEmpty()) {
-                itemsTotalBom.push(React.createElement("div", null,
-                    React.createElement("div", { className: "divbom" },
-                        React.createElement("h1", { id: "bom" }, "Total bill of materials for this project")),
-                    React.createElement(BomList, { proj: proj, bom: bom })));
-            }
+            itemsTotalBom.push(React.createElement("div", null,
+                React.createElement("div", { className: "divbom" },
+                    React.createElement("h1", { id: "bom" }, "Total bill of materials for this project")),
+                React.createElement(BomList, { proj: proj, bom: bom })));
+        }
+        else {
+            console.log("no root brick found for bom");
         }
         var projectid = getQueryStringValue("id");
         var downloadlink = "DownloadZip?id=" + projectid;
-        return React.createElement("div", null,
-            React.createElement("div", { className: "w3-sidebar" },
-                React.createElement("h3", null,
-                    React.createElement("a", { href: "./" }, "DocuBricks")),
-                React.createElement("h3", null,
-                    React.createElement("a", { href: downloadlink }, "Download project")),
-                React.createElement("br", null),
-                React.createElement("h3", null, "Bricks:"),
-                this.renderBrickTree(brickTree),
-                React.createElement("h3", null,
-                    React.createElement("a", { href: "#bom" }, "Bill of materials")),
-                React.createElement("h3", null,
-                    React.createElement("a", { href: "#authors" }, "Authors"))),
-            React.createElement("div", { className: "w3-container" },
-                React.createElement("div", null, itemsBricks),
-                React.createElement("div", null, itemsParts),
-                React.createElement("div", { className: "brickdiv" },
-                    React.createElement("h1", { id: "authors" }, "Authors")),
-                React.createElement("table", null,
-                    React.createElement("thead", null,
-                        React.createElement("tr", null,
-                            React.createElement("th", null, "Name"),
-                            React.createElement("th", null, "E-mail"),
-                            React.createElement("th", null, "Affiliation"),
-                            React.createElement("th", null, "ORCID"))),
-                    React.createElement("tbody", null, itemsAuthors)),
-                itemsTotalBom));
+        return React.createElement("div", { className: "all" },
+            React.createElement("div", { className: "page-container" },
+                React.createElement("div", { className: "navbar navbar-default navbar-fixed-top", role: "navigation" },
+                    React.createElement("div", { className: "container" },
+                        React.createElement("div", { className: "navbar-header" },
+                            React.createElement("button", { type: "button", className: "navbar-toggle", "data-toggle": "offcanvas", "data-target": ".sidebar-nav" },
+                                React.createElement("span", { className: "icon-bar" }),
+                                React.createElement("span", { className: "icon-bar" }),
+                                React.createElement("span", { className: "icon-bar" })),
+                            React.createElement("a", { className: "navbar-brand", href: "./" }, "DocuBricks")))),
+                React.createElement("div", { className: "container" },
+                    React.createElement("div", { className: "row row-offcanvas row-offcanvas-left" },
+                        React.createElement("div", { className: "col-xs-12 col-sm-3 sidebar-offcanvas no-print", id: "sidebar", role: "navigation" },
+                            React.createElement("ul", { className: "nav", "data-spy": "affix" },
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: downloadlink }, "Download project")),
+                                React.createElement("li", null,
+                                    React.createElement("a", { className: "accordion-toggle collapsed", id: "btn-1", "data-toggle": "collapse", "data-target": "#submenu1", "aria-expanded": "false" }, "Bricks"),
+                                    React.createElement("li", { className: "nav collapse", id: "submenu1", role: "menu", "aria-labelledby": "btn-1" }, this.renderBrickTree(brickTree))),
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#partstart" }, "Parts")),
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#bom" }, "Bill of materials")),
+                                React.createElement("li", null,
+                                    React.createElement("a", { href: "#authors" }, "Authors")))),
+                        React.createElement("div", { className: "col-xs-12 col-sm-9", id: "main-content" },
+                            React.createElement("div", null,
+                                React.createElement("div", { id: "brickstart" }, itemsBricks),
+                                React.createElement("div", { id: "partstart" }, itemsParts),
+                                React.createElement("div", { className: "brickdiv" },
+                                    React.createElement("h3", { id: "authors" }, "Authors")),
+                                React.createElement("table", null,
+                                    React.createElement("thead", null,
+                                        React.createElement("tr", null,
+                                            React.createElement("th", null, "Name"),
+                                            React.createElement("th", null, "E-mail"),
+                                            React.createElement("th", null, "Affiliation"),
+                                            React.createElement("th", null, "ORCID"))),
+                                    React.createElement("tbody", null, itemsAuthors)),
+                                itemsTotalBom))))));
     }
 }
 exports.DocubricksProject = DocubricksProject;
@@ -506,28 +527,27 @@ class Brick extends React.Component {
                     value));
         };
         addField("Description", brick.long_description);
-        mnodes.push(React.createElement("p", { key: brickkey + "_brickabstract", style: pStyle }, brick.abstract));
+        mnodes.push(React.createElement("p", { key: brickkey + "_brickabstract" }, brick.abstract));
         mnodes.push(React.createElement(Files, { key: brickkey + "_files", proj: proj, files: brick.files, basekey: brickkey }));
         addField("License", brick.license);
         addField("Notes", brick.notes);
         //Authors
         if (brick.authors.length != 0) {
             var alist = "";
-            for (let a of brick.instructions) {
+            for (let aid of brick.authors) {
+                var a = proj.getAuthorById(aid);
                 if (alist.length != 0) {
                     alist = alist + ", " + a.name;
                 }
                 else
                     alist = a.name;
             }
-            addField("Authors", brick.notes);
+            addField("Authors", alist);
         }
         //Functions & implementations
         var reqnodes = [];
         for (let func of brick.mapFunctions.values()) {
             var fnodes = [];
-            console.log(666);
-            console.log(fnodes);
             for (let imp of func.implementations) {
                 var impend = "";
                 if (fnodes.length != 0)
@@ -557,7 +577,6 @@ class Brick extends React.Component {
             reqnodes.push(React.createElement("li", null,
                 React.createElement("b", null, desc),
                 fnodes));
-            console.log(fnodes);
         }
         var reqnodes2 = [];
         if (reqnodes.length != 0) {
@@ -628,7 +647,7 @@ class Part extends React.Component {
         }
         var ret = React.createElement("div", null,
             React.createElement("div", { className: "partdiv" },
-                React.createElement("h1", { id: "part_" + partid },
+                React.createElement("h3", { id: "part_" + partid },
                     "Part: ",
                     part.name)),
             mnodes);
@@ -662,10 +681,11 @@ class InstructionList extends React.Component {
         var curstep = 1;
         for (let step of instr.steps) {
             var stepkey = key + "_" + curstep;
-            snodes.push(React.createElement("div", { key: stepkey },
-                React.createElement("nav", null,
+            snodes.push(React.createElement("div", { className: "step", key: stepkey },
+                React.createElement("hr", null),
+                React.createElement("nav", { className: "image-col" },
                     React.createElement(Files, { proj: proj, files: step.files, basekey: stepkey })),
-                React.createElement("article", null,
+                React.createElement("article", { className: "text-col" },
                     React.createElement("b", null,
                         "Step ",
                         curstep,
@@ -675,11 +695,12 @@ class InstructionList extends React.Component {
             snodes.push(React.createElement("div", { key: stepkey + "_end", style: divclear }));
             curstep++;
         }
+        var instrtitle = "Instruction: " + instr.name;
+        if (instr.name == "assembly")
+            instrtitle = "Assembly instruction";
         if (snodes.length > 0)
             return React.createElement("div", { key: key + "_main" },
-                React.createElement("h3", null,
-                    "Instruction: ",
-                    instr.name),
+                React.createElement("h3", null, instrtitle),
                 snodes);
         else
             return React.createElement("div", { key: key + "_main" });
@@ -783,7 +804,9 @@ class Files extends React.Component {
                     React.createElement("img", { src: imgurl, style: imgStyle })));
             }
             else {
-                fnodes.push(formatURLfile(imgurl, f.url)[0]);
+                var s = new String(f.url);
+                s = s.replace(/.*\//gi, "");
+                fnodes.push(formatURLfile(imgurl, s.toString())[0]);
             }
         }
         return React.createElement("div", null,
