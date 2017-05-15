@@ -63,15 +63,8 @@
 				and HTML viewer used by this website to render the XML-based documentations
 				nicely, and the code for the website itself.</p>
 			<p class="lead">
-				<a href="https://github.com/mahogny/docubricksEditor">DocuBricks source code repository</a>
+				<a href="https://github.com/DocuBricks">DocuBricks source code repository</a>
 			</p>
-
-			<p>Alternatively, you can access the code in the directory of our lead-developer: <br>
-				<a href="https://github.com/mahogny/docubricksEditor">DocuBricks editor</a>;
-				<a href="https://github.com/mahogny/docubricksViewer">DocuBricks viewer</a>;
-				<a href="https://github.com/mahogny/docubricksSite">DocuBricks site</a>
-			</p>
-
 
 <h3>Introducing the DocuBricks XML format</h3>
 
@@ -104,12 +97,12 @@
 <div style="box-shadow: 5px 5px 4px grey; background-color: lightgrey;">
 	<p><strong>File storage</strong></p>
 	<p>
-	All files that are referred to in the DocuBricks XML document should be stored in an accessible folder close to the document. When the documentation is created with the <strong>DocuBricks editor software</strong> available at docubricks.com, such a folder called &ldquo;usdata&rdquo; is automatically created with all the files that are dragged-and-dropped into the editor.</p>
+	All files that are referred to in the DocuBricks XML document should be stored in an accessible folder close to the document. When the documentation is created with the <strong>DocuBricks editor software</strong>, such a folder called &ldquo;usdata&rdquo; is automatically created with all the files that are dragged-and-dropped into the editor. Re-saving the project to a new location via the editor will place all files in this folder, except the docubricks.xml itself.</p>
 </div>
 
 <h3>Definitions </h3>
 
-The following lists define the elements of the DocuBricks XML format:</p>
+The following reader-friendly lists define the elements of the DocuBricks XML format:</p>
 
 <p>&lt;<strong>docubricks</strong>&gt; <em>tag for the start of DocuBricks documentation of the project; the brackets are not written in the following definitions</em></p>
 
