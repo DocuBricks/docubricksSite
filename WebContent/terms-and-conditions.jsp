@@ -72,7 +72,6 @@
 				smoothly. However, docubricks takes no responsibility for, and will
 				not be liable for, the website being temporarily unavailable due to
 				technical issues beyond our control.</p>
-			</ul>
 			<p>DocuBricks is a registered trademark and only to be used in the context
 			 of open source projects and without deviating from the DocuBricks XML structure
 		 	as currently supported on this platform.</p>
