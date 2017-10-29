@@ -223,5 +223,24 @@ public class DocubricksSqlConnection
 		connection.setAutoCommit(false);
 		connection.commit();
 		}
+
+	public PreparedStatement prepareInsert(String table, String... arg) throws SQLException
+		{
+		StringBuilder sb=new StringBuilder();
+		sb.append("INSERT INTO "+table+"(");
+		sb.append(arg[0]);
+		for(String s:arg)
+			{
+			sb.append(",");
+			sb.append(s);
+			}
+		sb.append(") VALUES (");
+		sb.append("?");
+		for(int i=0;i<arg.length-1;i++)
+			sb.append(",?");
+		sb.append(");");
+		
+		return prepareStatement(sb.toString());
+		}
 	
 	}

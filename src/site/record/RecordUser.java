@@ -31,7 +31,7 @@ public class RecordUser
 	public String country;
 */
 
-	public long timeCreatedAccount=System.currentTimeMillis();
+	public long timeCreated=System.currentTimeMillis();
 
 	private String orcid="";
 	
@@ -77,13 +77,13 @@ public class RecordUser
 		stDel.execute();
 		
 		
-		PreparedStatement stIns=conn.prepareStatement("INSERT INTO docubricks_user VALUES (?,?,?,?,?,?,?);");
-
+		PreparedStatement stIns=conn.prepareInsert(
+				"user_email","user_password","user_name","user_surname","user_timecreated","user_orcid","user_isadmin");
 		stIns.setString(1, emailPrimary);
 		stIns.setString(2, passwordHashed);
 		stIns.setString(3, firstName);
 		stIns.setString(4, lastName);
-		stIns.setLong  (5, timeCreatedAccount);
+		stIns.setLong  (5, timeCreated);
 		stIns.setString(6, orcid);
 		stIns.setBoolean(7, isAdmin);
 

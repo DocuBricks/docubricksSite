@@ -86,10 +86,19 @@ public class RecordDocument
 		stDel.setLong(1, id);
 		stDel.execute();
 		
-		//TODO this should be atomic so the ID is not reused in this time
+		//TODO this should be atomic so the ID is not reused this time
 		
-		PreparedStatement stIns=conn.prepareStatement("INSERT INTO docubricks_document VALUES (?,?,?,?, ?,?,?,?);");
-
+		PreparedStatement stIns=conn.prepareInsert("docubricks_document",
+				"document_id",
+			  "document_timecreated",
+			  "document_xml",
+			  "document_owner",
+			  
+			  "document_name",
+			  "document_image",
+			  "document_desc",
+			  "document_shortlink");
+		
 		stIns.setLong  (1, id);
 		stIns.setLong  (2, timeCreated);
 		stIns.setString(3, documentXML);
@@ -98,7 +107,6 @@ public class RecordDocument
 		stIns.setString(5, documentName);
 		stIns.setString(6, documentImage);
 		stIns.setString(7, documentDesc);
-
 		stIns.setString(8, documentShortLink);
 
 		stIns.execute();

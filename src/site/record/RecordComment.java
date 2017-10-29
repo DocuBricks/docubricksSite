@@ -65,8 +65,13 @@ public class RecordComment
 		stDel.execute();
 		
 		//TODO this should be atomic so the ID is not reused in this time
-		
-		PreparedStatement stIns=conn.prepareStatement("INSERT INTO docubricks_document_comment VALUES (?,?,?,?,?,?);");
+		PreparedStatement stIns=conn.prepareInsert("docubricks_document_comment",
+			  "comment_id",
+			  "document_id",
+			  "brick_id",
+			  "comment_timecreated",
+			  "comment_user",
+			  "comment_text");
 
 		stIns.setLong  (1, commentId);
 		stIns.setLong  (2, documentID);
