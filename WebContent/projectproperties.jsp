@@ -144,3 +144,7 @@ else
 </div>
 
 <jsp:include page="bottom.html" />
+
+<%
+	ws.close();
+%>

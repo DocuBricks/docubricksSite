@@ -477,20 +477,20 @@ class DocubricksProject extends React.Component {
                             React.createElement("a", { className: "navbar-brand", href: "./" }, "DocuBricks")))),
                 React.createElement("div", { className: "container" },
                     React.createElement("div", { className: "row row-offcanvas row-offcanvas-left" },
-                        React.createElement("div", { className: "col-xs-12 col-sm-3 sidebar-offcanvas no-print", id: "sidebar", role: "navigation" },
+                        React.createElement("div", { className: "col-xs-12 col-sm-4 sidebar-offcanvas no-print", id: "sidebar", role: "navigation" },
                             React.createElement("ul", { className: "nav", "data-spy": "affix" },
                                 React.createElement("li", null,
                                     React.createElement("a", { href: downloadlink }, "Download project")),
                                 React.createElement("li", null,
-                                    React.createElement("a", { className: "accordion-toggle collapsed", id: "btn-1", "data-toggle": "collapse", "data-target": "#submenu1", "aria-expanded": "false" }, "Bricks"),
-                                    React.createElement("li", { className: "nav collapse", id: "submenu1", role: "menu", "aria-labelledby": "btn-1" }, this.renderBrickTree(brickTree))),
+                                    React.createElement("a", { className: "accordion-toggle", id: "btn-1", "data-toggle": "collapse", "data-target": "#submenu1", "aria-expanded": "true" }, "Bricks"),
+                                    React.createElement("li", { className: "nav collapse in ", id: "submenu1", role: "menu", "aria-labelledby": "btn-1" }, this.renderBrickTree(brickTree))),
                                 React.createElement("li", null,
                                     React.createElement("a", { href: "#partstart" }, "Parts")),
                                 React.createElement("li", null,
                                     React.createElement("a", { href: "#bom" }, "Bill of materials")),
                                 React.createElement("li", null,
                                     React.createElement("a", { href: "#authors" }, "Authors")))),
-                        React.createElement("div", { className: "col-xs-12 col-sm-9", id: "main-content" },
+                        React.createElement("div", { className: "col-xs-12 col-sm-8", id: "main-content" },
                             React.createElement("div", null,
                                 React.createElement("div", { id: "brickstart" }, itemsBricks),
                                 React.createElement("div", { id: "partstart" }, itemsParts),
@@ -526,6 +526,9 @@ class Brick extends React.Component {
                         ": "),
                     value));
         };
+        if (typeof brick.abstract != 'undefined') {
+            addField("Abstract", brick.abstract);
+        }
         addField("Description", brick.long_description);
         mnodes.push(React.createElement("p", { key: brickkey + "_brickabstract" }, brick.abstract));
         mnodes.push(React.createElement(Files, { key: brickkey + "_files", proj: proj, files: brick.files, basekey: brickkey }));
@@ -695,7 +698,8 @@ class InstructionList extends React.Component {
             snodes.push(React.createElement("div", { key: stepkey + "_end", style: divclear }));
             curstep++;
         }
-        var instrtitle = "Instruction: " + instr.name;
+        var instrName = instr.name || '';
+        var instrtitle = "Instruction: " + instrName;
         if (instr.name == "assembly")
             instrtitle = "Assembly instruction";
         if (snodes.length > 0)
@@ -792,16 +796,11 @@ class Files extends React.Component {
         var inodes = [];
         var fnodes = [];
         for (let f of files) {
-            const imgStyle = {
-                maxWidth: '300px',
-                //width:'100%',
-                maxHeight: '300px',
-                margin: '5px'
-            };
-            var imgurl = basedir + f.url;
+            var imgurl = basedir + f.url.replace(/\.\//g, '');
             if (isImage(imgurl)) {
                 inodes.push(React.createElement("a", { key: this.props.basekey + f.url, href: imgurl, "data-lightbox": "image" },
-                    React.createElement("img", { src: imgurl, style: imgStyle })));
+                    React.createElement("img", { className: "instr-img", src: imgurl }),
+                    React.createElement("p", { className: "instr-img-caption no-print" }, "Expand")));
             }
             else {
                 var s = new String(f.url);

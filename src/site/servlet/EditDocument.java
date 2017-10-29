@@ -1,8 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.minidev.json.JSONObject;
-import site.Session;
 import site.DocubricksSite;
 import site.record.RecordDocument;
 
@@ -20,52 +17,17 @@ import site.record.RecordDocument;
  */
 @WebServlet("/EditDocument")
 @MultipartConfig
-public class EditDocument extends HttpServlet
+public class EditDocument extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
-	
-	DocubricksSite session;
-	
-	@Override
-	public void init() throws ServletException
-		{
-		super.init();
-		try
-			{
-			session=new DocubricksSite();
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
-			}
-		}
-
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			session.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
-
-	
-	
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
 			JSONObject retob=new JSONObject();
 
@@ -78,8 +40,8 @@ public class EditDocument extends HttpServlet
 				doc=new RecordDocument();
 				doc.allocate(session.getConn());
 				//TODO set owner here
-	    	Session session=Session.fromSession(request.getSession());
-	    	doc.documentOwner=session.userEmail;
+	    	session.fromSession(request.getSession());
+	    	doc.documentOwner=session.session.userEmail;
       	
 				}
 			else
@@ -100,20 +62,14 @@ public class EditDocument extends HttpServlet
 			retob.put("id", ""+doc.id);
 			response.getWriter().append(retob.toJSONString());
 
+			
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

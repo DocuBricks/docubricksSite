@@ -21,7 +21,7 @@ import site.util.EvXmlUtil;
  * Get a single document XML
  */
 @WebServlet("/GetDocumentJSON")
-public class GetDocumentJSON extends HttpServlet
+public class GetDocumentJSON extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
@@ -30,9 +30,8 @@ public class GetDocumentJSON extends HttpServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
-			DocubricksSite session=new DocubricksSite();
 			String id=request.getParameter("id");
 			if(id==null)
 				response.sendError(404, "No id specified");
@@ -60,12 +59,5 @@ public class GetDocumentJSON extends HttpServlet
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

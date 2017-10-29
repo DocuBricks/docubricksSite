@@ -1,8 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,47 +16,17 @@ import site.record.RecordDocument;
  * Create a document
  */
 @WebServlet("/CreateDocument")
-public class CreateDocument extends HttpServlet
+public class CreateDocument extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
-	DocubricksSite session;
 	
-	@Override
-	public void init() throws ServletException
-		{
-		super.init();
-		try
-			{
-			session=new DocubricksSite();
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
-			}
-		}
-
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			session.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
 			RecordDocument docrec=new RecordDocument();
 
@@ -71,19 +39,11 @@ public class CreateDocument extends HttpServlet
 //    	retob.put("error", "Zip does not contain a docubrick");
     	response.getWriter().append(retob.toJSONString());
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
-		}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
 		}
 
 	}

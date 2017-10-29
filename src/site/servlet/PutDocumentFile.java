@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -25,53 +23,21 @@ import site.record.RecordDocument;
  */
 @WebServlet("/PutDocumentFile")
 @MultipartConfig
-public class PutDocumentFile extends HttpServlet
+public class PutDocumentFile extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
 	
-	DocubricksSite session;
-	
-	@Override
-	public void init() throws ServletException
-		{
-		super.init();
-		try
-			{
-			session=new DocubricksSite();
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
-			}
-		}
-
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			session.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
 			JSONObject retob=new JSONObject();
 
-			DocubricksSite session=new DocubricksSite();
 			session.fromSession(request.getSession());
 			String id=request.getParameter("id");
 			if(id==null)
@@ -114,19 +80,12 @@ public class PutDocumentFile extends HttpServlet
       	response.getWriter().append(retob.toJSONString());
 				}
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

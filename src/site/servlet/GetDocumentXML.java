@@ -1,8 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +14,7 @@ import site.record.RecordDocument;
  * Get a single document XML
  */
 @WebServlet("/GetDocumentXML")
-public class GetDocumentXML extends HttpServlet
+public class GetDocumentXML extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
@@ -25,9 +23,8 @@ public class GetDocumentXML extends HttpServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
-			DocubricksSite session=new DocubricksSite();
 			String id=request.getParameter("id");
 			if(id==null)
 				response.sendError(404, "No id specified");
@@ -43,19 +40,12 @@ public class GetDocumentXML extends HttpServlet
 					response.getWriter().append("null");
 				}
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

@@ -7,6 +7,7 @@
 	ws.fromSession(request.getSession());
 %>
 
+
 <jsp:include page="header.html" />
 <script src="edit.js"></script>
 <!--  <script src="js/autosize.js"></script>  -->
@@ -181,3 +182,7 @@
 
 
 <jsp:include page="bottom.html" />
+
+<%
+	ws.close();
+%>

@@ -1,8 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,21 +15,20 @@ import site.record.RecordDocument;
  * Delete a document
  */
 @WebServlet("/DeleteDocument")
-public class DeleteDocument extends HttpServlet
+public class DeleteDocument extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
+
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		JSONObject retob=new JSONObject();
-
-		
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
-			DocubricksSite session=new DocubricksSite();
+			JSONObject retob=new JSONObject();
 			String id=request.getParameter("id");
 			if(id==null)
 				response.sendError(404, "No id specified");
@@ -49,7 +46,7 @@ public class DeleteDocument extends HttpServlet
 				}
 			response.getWriter().append(retob.toJSONString());
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());

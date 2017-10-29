@@ -1,0 +1,84 @@
+step 1.
+launch instance with ubuntu
+free tier. standard settings except:
+add http in security group. and https.
+might be convenient: postgres access as well (tunnel?)
+
+key: import id_rsa.pub from .ssh/
+...eeek. should be id_rsa?
+
+step 2.
+create elastic IP (network and security, left)
+allocate new address
+action -> associate adress. pick instance
+
+======== instance should now be running happily ===========
+
+step 3.
+ssh to ubuntu@<elastic dns>
+ssh ubuntu@ec2-52-41-241-68.us-west-2.compute.amazonaws.com
+
+install required packages
+sudo apt-get install git authbind make postgresql openjdk-7-jdk
+
+#ubuntu workaround
+sudo su
+export LANGUAGE="en_US.UTF-8"
+echo 'LANGUAGE="en_US.UTF-8"' >> /etc/default/locale
+echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
+(unsudo)
+sudo pg_createcluster 9.3 main --start
+
+
+step 4. edit psql settings. end of /etc/postgresql/9.3/main/pg_hba.conf should be
+=============================================
+# Database administrative login by Unix domain socket
+local   all             postgres                                trust
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                     trust
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            trust
+# IPv6 local connections:
+host    all             all             ::1/128                 trust
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+#local   replication     postgres                                peer
+#host    replication     postgres        127.0.0.1/32            md5
+#host    replication     postgres        ::1/128                 md5
+===============================================
+
+then restart:
+sudo /etc/init.d/postgresql restart
+
+step 5.
+upload backup.tar.gz to instance with scp
+scp backup.tar.gz ubuntu@ec2-52-41-241-68.us-west-2.compute.amazonaws.com:/home/ubuntu
+then: tar xzf backup.tar.gz
+
+step 5.
+restore database
+psql --user postgres -f db.txt template1
+
+step 6.
+start server
+sudo make restart
+
+step 7.
+update dns record to point to elastic dns
+
+
+
+step 8.
+restore keys in in .ssh/authorized_keys there should be
+===========================
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC2SmMrrtt9j8CTpo7jYLCuclpo8bO1xAqnoU5LEN4+asO8hhLe+q+0mRANX1ZQSKqH3PMStKNqedHjjVELi8f3RjOlYkDZSeOXHWhmJDZdufDJXnovbzt+/kUXUl5Hlc1SePpaWDniKoKtUL8tIN+QoJ+I183P4F1HVsKVRRhqJ5SqtH7FGA+JrLQlc8xtMdM6Fn9BkRVmip3lwZB63GvII4a/Y5fCcZkO/fFHfcJAvA8qMU9ZZl3MgURytFbzPjjiDEfBZntreMrBcwUw3e/LZBFBiXv7nCEX8FqO75XvbyqBqHl33lF5tyMMvQZysf/mqnVj0auJX9UtRPLCotiP key3
+
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAs3gNYfgQVKxcn9PbSuD/E5oiRWx/epmlhRTB9mBdSry1cqOYAdzXGcQgh5DlOkHytNoISPjMHa7OSmmf8vvp1XspTc53vmgsBogkvPjhsH//GOlsDEazUpEuh8t/w+g9ea6kXDJP/Pw+ArR/LqpF5zmgQvrHZGvjnZYkzw9eaG1q31oASoR6y1CBVA+eaK25VkUcNpcLBA3qqtpoGb2yJexu+ES+qmkJQiMwzfxWb4NZrKf85tH69h2fSo0pkKIvG8cj0+iuQGeenesXiUMBEav7z9vsrQTojJqlH/Rf1S+cojIG279geDzwtJ3EWrUUzDXBrW+8eirdpHaQxpf2+Q== mahogny@areta.org
+
+ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlEw2sMUvuyeTMSBYBi85o1I+qsky7BUwrUmDpEhv9vo1zdqTZtYfk2x2/P01Ay46N9ooTzcmIapSRz1TQhJww/0xFMaohLS8EWUhwCr6wXWEHNohM1mdyReEYzJPBKUB1jCHNiSINiKWLjJYMQh+C4if4sAtW3owGyizw4eNl7IwArpyhg/8DW+JH9GQTeklcrJmYDw4CxNyPg6svVa4J6CGwrg1Tooc3cv+Qz5XQxJSQebeb19/+XKyCNTDq9HJumYF7P8jbMbwjCice4qUQmgbKdGXnpzQaVGuupsxprTX8OAihcLW/jHa9UA7CbIgaPkEyZsZE5of56epgYeATQ== tobey
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9+nHXy6Nt9Tc+2yyard9Ehcun2D01UE5RQlm7GJmZWkxXZKPkF205K6YecgHNRVIArkHx3hXNlfoSUSOtFIuO8N8q4Ae6EK1UzNQfkDtglYvLKQ64I8me/sf64RHjEDdGVNWQkd7um+DlN2MaPt540bMIfLDvcieBgpU3mfL1k8kCmxKhjlGGtQC+t4ahP33JXNFkFjviy1rabj46pCQWOzHbjYImwf8f7N0XmS0qy0UZYm7NdUTzTMb6IIXF9Fw+R2g6KCDXVVTMG7znXwlRupbMHFP32fOgHplTqY2pfO/eLWCB0G2d7L/yCZ/QA7I3bXODzruufqPWPoZAVARV djlewis@Daniels-MacBook-Pro.local
+===========================

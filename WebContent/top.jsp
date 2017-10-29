@@ -72,6 +72,9 @@
 							<li><a onclick="return do_logout()">Logout</a></li>
 							<%
 							}
+						
+						ws2.close();
+
 						%>
 						</ul></li>
 				</ul>

@@ -66,7 +66,7 @@ public class Session implements Serializable
 	
 	public RecordUser getUserInfo(String userID) throws SQLException
 		{
-		return new RecordUser();
+		return new RecordUser(); //why?
 //		return UserInfo.query(conn, userID);
 		}
 	

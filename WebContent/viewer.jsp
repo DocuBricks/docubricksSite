@@ -9,6 +9,12 @@
 <%@page import="site.util.EvXmlUtil"%>
 <%@page import="site.DocubricksSite"%>
 <%@page%>
+
+<%
+DocubricksSite ws=new DocubricksSite();
+ws.fromSession(request.getSession());
+%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,11 +32,6 @@
 		<!--  Original XML data goes in here  -->
 		<div class="hideclass" id="hiddendata"> 
 			<%
-			
-			DocubricksSite ws=new DocubricksSite();
-			ws.fromSession(request.getSession());
-			
-		
 		
 			String id=request.getParameter("id");
 			if(id!=null)
@@ -99,3 +100,6 @@
 
 
 
+<%
+	ws.close();
+%>

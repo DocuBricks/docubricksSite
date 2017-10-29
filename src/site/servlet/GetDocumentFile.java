@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,49 +20,17 @@ import site.record.RecordDocument;
  * Get a single document XML
  */
 @WebServlet("/project/*")
-public class GetDocumentFile extends HttpServlet
+public class GetDocumentFile extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
-	DocubricksSite session;
-	
-	@Override
-	public void init() throws ServletException
-		{
-		super.init();
-		try
-			{
-			session=new DocubricksSite();
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
-			}
-		}
-
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			session.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
-	
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
 			String url=request.getRequestURI().toString();
 			url=url.substring(url.indexOf("project/")+"project/".length());
@@ -147,20 +113,12 @@ public class GetDocumentFile extends HttpServlet
 			else
 				response.sendError(HttpServletResponse.SC_NOT_FOUND,"Missing project ID");
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
-			response.getWriter().append("bar");
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

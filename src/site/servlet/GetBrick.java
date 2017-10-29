@@ -1,8 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,18 +14,18 @@ import site.record.RecordDocument;
  * Get XML for a brick. Well. Do we need this one at all? Can easily use the full document and pull out from there
  */
 @WebServlet("/GetBrick")
-public class GetBrick extends HttpServlet
+public class GetBrick extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
-			DocubricksSite session=new DocubricksSite();
 			String id=request.getParameter("id");
 			if(id==null)
 				response.sendError(404, "No id specified");
@@ -43,19 +41,12 @@ public class GetBrick extends HttpServlet
 					response.getWriter().append("null");
 				}
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

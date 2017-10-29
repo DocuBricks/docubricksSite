@@ -1,7 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -19,41 +18,10 @@ import site.record.RecordDocument;
  * Query for a list of documents
  */
 @WebServlet("/GetDocumentList")
-public class GetDocumentList extends HttpServlet
+public class GetDocumentList extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
-	DocubricksSite session;
-	
-	@Override
-	public void init() throws ServletException
-		{
-		super.init();
-		try
-			{
-			session=new DocubricksSite();
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
-			}
-		}
-
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			session.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
 	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -62,7 +30,7 @@ public class GetDocumentList extends HttpServlet
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
 			JSONArray arr=new JSONArray();
 
@@ -92,19 +60,12 @@ public class GetDocumentList extends HttpServlet
 			response.setContentType("application/json");
 			response.getWriter().append(arr.toJSONString());
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
 		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

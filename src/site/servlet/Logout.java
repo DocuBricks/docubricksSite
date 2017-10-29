@@ -17,61 +17,32 @@ import site.DocubricksSite;
  * Log out
  */
 @WebServlet("/Logout")
-public class Logout extends HttpServlet
+public class Logout extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
-	DocubricksSite site;
-	
-	@Override
-	public void init() throws ServletException
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		super.init();
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
-			site=new DocubricksSite();
+			JSONObject retob=new JSONObject();
+	  	session.session=Session.fromSession(request.getSession());
+	  	session.session.userEmail=null;
+	  	session.session.toSession();
+	  	response.getWriter().append(retob.toJSONString());
 			}
 		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
+
+		
+		
 		}
 
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			site.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
-	
-	
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		JSONObject retob=new JSONObject();
-  	Session session=Session.fromSession(request.getSession());
-  	session.userEmail=null;
-  	session.toSession();
-  	response.getWriter().append(retob.toJSONString());
-		}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
-		}
 
 	}

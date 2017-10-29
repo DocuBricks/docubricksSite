@@ -14,15 +14,16 @@ import site.record.RecordUser;
  * @author Johan Henriksson
  *
  */
-public class DocubricksSite
+public class DocubricksSite implements AutoCloseable
 	{
 	public Session session=new Session();
 	private DocubricksSqlConnection conn=new DocubricksSqlConnection();
+
+	private static ConnPool pc=new ConnPool();
 	
 	public DocubricksSite() throws IOException, SQLException
 		{
-	  conn.connect("org.postgresql.Driver", "jdbc:postgresql://localhost/docubricks", "mahogny",	"hej");
-	  
+		conn=pc.get();
 	  RecordUser.createTable(conn);
 	  RecordDocument.createTable(conn);
 	  }
@@ -99,7 +100,7 @@ public class DocubricksSite
 	protected void finalize() throws Throwable
 		{
 		//this might not be forceful enough
-		conn.close();
+		close();
 		super.finalize();
 		}
 
@@ -111,13 +112,10 @@ public class DocubricksSite
 	
 	public void close()
 		{
-		try
+		if(conn!=null)
 			{
-			conn.close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
+			pc.put(conn);
+			conn=null;
 			}
 		}
 	}

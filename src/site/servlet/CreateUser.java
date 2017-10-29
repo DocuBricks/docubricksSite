@@ -1,8 +1,6 @@
 package site.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,41 +19,10 @@ import site.record.RecordUser;
  * Create a user
  */
 @WebServlet("/CreateUser")
-public class CreateUser extends HttpServlet
+public class CreateUser extends DocubricksServlet
 	{
 	private static final long serialVersionUID = 1L;
 
-	DocubricksSite session;
-	
-	@Override
-	public void init() throws ServletException
-		{
-		super.init();
-		try
-			{
-			session=new DocubricksSite();
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			throw new ServletException(e.getMessage());
-			}
-		}
-
-	
-	@Override
-	public void destroy()
-		{
-		super.destroy();
-		try
-			{
-			session.getConn().close();
-			}
-		catch (IOException e)
-			{
-			e.printStackTrace();
-			}
-		}
 	
 	
 	public static String encPass(String pass)
@@ -68,7 +35,7 @@ public class CreateUser extends HttpServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
-		try
+		try(DocubricksSite session=new DocubricksSite())
 			{
 			//If creating new user: check if user exists already
 			boolean isEditing=request.getParameter("name").equals("1");
@@ -111,28 +78,23 @@ public class CreateUser extends HttpServlet
 			docrec.store(session.getConn());
 
 			//Log in the new user
-    	Session session=Session.fromSession(request.getSession());
-    	session.userEmail=docrec.emailPrimary;
-    	session.toSession();
+			session.session=Session.fromSession(request.getSession());
+    	session.session.userEmail=docrec.emailPrimary;
+    	session.session.toSession();
 
     	//Return response
 			JSONObject retob=new JSONObject();
     	retob.put("status","1");
     	response.getWriter().append(retob.toJSONString());
+			
 			}
-		catch (SQLException e)
+		catch (Exception e)
 			{
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}
-		}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-		{
-		doGet(request, response);
+		
 		}
 
 	}
