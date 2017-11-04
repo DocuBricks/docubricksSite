@@ -37,8 +37,8 @@ public class RecordDocument
 	@DatabaseField(columnName="document_xml")
 	public String documentXML;
 	
-	@DatabaseField(columnName="document_owner")
-	public String documentOwner="";
+//	@DatabaseField(columnName="document_owner")
+//	public String documentOwner="";
 
 	@DatabaseField(columnName="document_ownerid")
 	public int documentOwnerID;

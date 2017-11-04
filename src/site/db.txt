@@ -9,7 +9,7 @@ DROP TABLE docubricks_document_comment;
 
 CREATE TABLE docubricks_user
 (
-  user_id		SERIAL PRIMARY KEY,
+  user_id		bigint PRIMARY KEY,
   
   user_email 	text PRIMARY KEY,
   user_password text NOT NULL,
@@ -24,13 +24,13 @@ CREATE TABLE docubricks_user
   user_isadmin  bool NOT NULL
 );
 
-create sequence docubricks_user_id_seq;  //Surprisingly, this is the one used by ORMlite
-Select setval('docubricks_user_id_seq', 10 );
+create sequence docubricks_user_id_seq;  #Surprisingly, this is the one used by ORMlite
+Select setval('docubricks_user_id_seq', 30 );
 
 ALTER TABLE docubricks_user ADD user_id SERIAL;
 ALTER TABLE docubricks_user DROP constraint docubricks_user_pkey;
 ALTER TABLE docubricks_user ADD PRIMARY KEY (user_id);
-alter table docubricks_user alter user_id set default nextval('docubricks_document_id_seq');
+alter table docubricks_user alter user_id set default nextval('docubricks_user_id_seq');
 
 /////// New fields
 ALTER TABLE docubricks_user ADD user_passresetcode TEXT;
@@ -62,7 +62,7 @@ CREATE TABLE docubricks_document
   document_shortlink    text NOT NULL
 );
 
-//////// Transfer ID to use
+##### Transfer ID to use
 ALTER TABLE docubricks_document ADD document_ownerid int;
 UPDATE docubricks_document
 SET document_ownerid = (SELECT user_id FROM docubricks_user WHERE user_email=document_owner);
@@ -71,7 +71,7 @@ ALTER TABLE docubricks_document DROP document_owner;
 /////// Document ID update for serial
 create sequence docubricks_document_id_seq;
 alter table docubricks_document alter document_id set default nextval('docubricks_document_id_seq');
-Select setval('docubricks_document_id_seq', 2000051 );
+Select setval('docubricks_document_id_seq', 9134926926759813121 );
 
 //////// New fields
 ALTER TABLE docubricks_document ADD document_tags TEXT;
@@ -95,7 +95,7 @@ CREATE TABLE docubricks_document_tags
 );
 create sequence docubricks_document_tags_id_seq;
 alter table docubricks_document_tags alter tag_id set default nextval('docubricks_document_tags_id_seq');
-////////// the ORM needs this sequence
+##### the ORM needs this sequence
 
 
 

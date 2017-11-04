@@ -32,33 +32,42 @@ public class GetDocumentList extends DocubricksServlet
 		{
 		try(DocubricksSite session=new DocubricksSite())
 			{
-			JSONArray arr=new JSONArray();
-
-			//TODO allow to query somehow. ... how?
-			
 			session.fromSession(request.getSession());
-			List<RecordDocument> docs=RecordDocument.getUserDocuments(session);
-			
-			
-			//Write all the simple variables
-			for(RecordDocument d:docs)
+			if(session.loggedIn())
 				{
-				JSONObject ob=new JSONObject();
-				ob.put("id", ""+d.id); //Has to be a string since JS only has floating-point numbers
-				ob.put("created", ""+d.timeCreated);
-				ob.put("owner", d.documentOwner);
-				
-				ob.put("name", d.documentName);
-				ob.put("image", d.documentImage);
-				ob.put("description", d.documentDesc);
-				ob.put("tags", d.getTagListComma());
-				ob.put("ispublic", d.isPublic);
+				//Write all the simple variables
+				List<RecordDocument> docs=RecordDocument.getUserDocuments(session);
+				JSONArray arr=new JSONArray();
+				for(RecordDocument d:docs)
+					{
+					JSONObject ob=new JSONObject();
+					ob.put("id", ""+d.id); //Has to be a string since JS only has floating-point numbers
+					ob.put("created", ""+d.timeCreated);
+					//ob.put("owner", d.documentOwner);
+					ob.put("ownerid", d.documentOwnerID);
+					
+					ob.put("name", d.documentName);
+					ob.put("image", d.documentImage);
+					ob.put("description", d.documentDesc);
+					ob.put("tags", d.getTagListComma());
+					ob.put("ispublic", d.isPublic);
 
-				arr.add(ob);
+					arr.add(ob);
+					}
+				response.setContentType("application/json");
+				response.getWriter().append(arr.toJSONString());
 				}
+			else
+				{
+				System.err.println("User not logged in tried to show his/her projects");
+				response.setContentType("application/json");
+				JSONArray arr=new JSONArray();
+				response.getWriter().append(arr.toJSONString());
+				}
+			
+			
+			
 
-			response.setContentType("application/json");
-			response.getWriter().append(arr.toJSONString());
 			}
 		catch (Exception e)
 			{

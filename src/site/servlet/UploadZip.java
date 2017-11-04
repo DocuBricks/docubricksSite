@@ -58,7 +58,7 @@ public class UploadZip extends DocubricksServlet
 				rec.documentOwnerID=session.session.userID;
 //				rec.documentOwner=session.session.userEmail;
 				//rec.documentOwner="mahogny@areta.org";
-				System.out.println("user email "+rec.documentOwner);
+				System.out.println("owner id "+rec.documentOwnerID);
       	rec.allocate(session);
 
 				DocumentDirectory docdir=rec.getDir();
