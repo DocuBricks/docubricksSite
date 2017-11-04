@@ -39,6 +39,7 @@ list_projects_disp = function(data) {
 		td.append(link);
 
 		////////////// edit content
+		/*
 		td = $("<td>");
 		link = $("<form action=\"edit.jsp\">" +
 				"<input type=\"hidden\" name=\"id\" value=\"" + rec.id +"\"/>"+
@@ -46,6 +47,7 @@ list_projects_disp = function(data) {
 				"</form>");
 		row.append(td);
 		td.append(link);
+		*/
 
 		
 		

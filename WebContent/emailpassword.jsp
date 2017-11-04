@@ -2,6 +2,8 @@
 <jsp:include page="top.jsp" />
 
 
+
+
 <div id="main">
 	<div class="container-fluid">
 		<div class="row">
@@ -10,12 +12,12 @@
 					<div class="panel-heading">Reset Password</div>
 					<div class="panel-body">
 
-						<form class="form-horizontal" role="form" onsubmit="return do_passwordreset()" name="login" accept-charset="UTF-8">
+						<form class="form-horizontal" role="form" onsubmit="return do_resetpassword()" name="login" accept-charset="UTF-8">
 
 							<div class="form-group">
 								<label class="col-md-4 control-label">E-Mail Address</label>
 								<div class="col-md-6">
-									<input type="email" class="form-control" name="email" value="">
+									<input type="email" class="form-control" name="email" id="email" value="">
 								</div>
 							</div>
 

@@ -31,8 +31,9 @@ public class CreateDocument extends DocubricksServlet
 			RecordDocument docrec=new RecordDocument();
 
 			session.fromSession(request.getSession());
-			docrec.documentOwner=session.session.userEmail;
-			docrec.allocate(session.getConn());
+			docrec.documentOwnerID=session.session.userID;
+//			docrec.documentOwner=session.session.userEmail;
+			docrec.allocate(session);
 			
 			JSONObject retob=new JSONObject();
     	retob.put("id",""+docrec.id);

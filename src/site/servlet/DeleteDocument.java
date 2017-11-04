@@ -38,7 +38,7 @@ public class DeleteDocument extends DocubricksServlet
 				if(doc!=null)
 					{
 					//not quite!
-					doc.delete(session.getConn());
+					doc.delete(session);
 			  	retob.put("status","1");
 					}
 				else

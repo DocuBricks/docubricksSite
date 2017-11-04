@@ -1,10 +1,9 @@
 package site.record;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-import site.DocubricksSqlConnection;
+import site.servlet.CreateUser;
 
 /**
  * Information about a user
@@ -12,16 +11,36 @@ import site.DocubricksSqlConnection;
  * @author Johan Henriksson
  *
  */
+@DatabaseTable(tableName = "docubricks_user")
 public class RecordUser
 	{
+	@DatabaseField(columnName="user_id", generatedId = true)//id = true,   ,allowGeneratedIdInsert=true)
+	public int id;
+	
+	@DatabaseField(columnName="user_password")
 	public String passwordHashed="";
 
+	//@DatabaseField(columnName="user_password")
 	public String organization="";
-	public String firstName, lastName;
+	
+	@DatabaseField(columnName="user_name")
+	public String firstName;
+	
+	@DatabaseField(columnName="user_surname")
+	public String lastName;
 
+	@DatabaseField(columnName="user_email")  //,index = true
 	public String emailPrimary;
 	
+	@DatabaseField(columnName="user_isadmin")
 	public boolean isAdmin=false;
+	
+	@DatabaseField(columnName="user_passresetcode")
+	public String passResetCode="";
+	
+	@DatabaseField(columnName="user_passresettime")
+	public long passResetTime=0;
+
 	
 	/*
 	public String telephone;
@@ -31,109 +50,34 @@ public class RecordUser
 	public String country;
 */
 
+	@DatabaseField(columnName="user_timecreated")
 	public long timeCreated=System.currentTimeMillis();
 
+	@DatabaseField(columnName="user_orcid")
 	private String orcid="";
 	
 	
 	
 	
-	public static RecordUser query(DocubricksSqlConnection conn, String email) throws SQLException
-		{
-		PreparedStatement ps=conn.prepareStatement("SELECT * FROM docubricks_user WHERE user_email=?;");
-		ps.setString(1, email);
-		ResultSet rs=ps.executeQuery();
-		
-		RecordUser info=null;
-		while(rs.next())
-			{
-			info=new RecordUser();
-			
-			info.passwordHashed=rs.getString("user_password");
-			info.emailPrimary=rs.getString("user_email");
-
-			info.firstName=rs.getString("user_name");
-			info.lastName=rs.getString("user_surname");
-			
-			info.orcid=rs.getString("user_orcid");
-			info.isAdmin=rs.getBoolean("user_isadmin");
-			}
-		
-		ps.close();
-		rs.close();
-		return info;
-		}
-
-	/**
-	 * Store info in database
-	 */
-	public void store(DocubricksSqlConnection conn) throws SQLException
-		{
-		//Transaction: delete,insert
-		//conn.todo();
 	
-		PreparedStatement stDel=conn.prepareStatement("DELETE FROM docubricks_user WHERE user_email=?;");
-		stDel.setString(1, emailPrimary);
-		stDel.execute();
-		
-		
-		PreparedStatement stIns=conn.prepareInsert(
-				"user_email","user_password","user_name","user_surname","user_timecreated","user_orcid","user_isadmin");
-		stIns.setString(1, emailPrimary);
-		stIns.setString(2, passwordHashed);
-		stIns.setString(3, firstName);
-		stIns.setString(4, lastName);
-		stIns.setLong  (5, timeCreated);
-		stIns.setString(6, orcid);
-		stIns.setBoolean(7, isAdmin);
-
-		stIns.execute();
-		}
-	
-	
-
+/*
 	public boolean setPassword(String pass1, String pass2)
 		{
 		if(pass1.equals(pass2))
-			{
 			return false;
-			}
-		
-		passwordHashed=pass1; //TODO
+		passwordHashed=pass1; //TODO   .... WTF?  since when is it not hashed??
 		return true;
+		}*/
+	public void setPassword(String pass)
+		{
+		passwordHashed=CreateUser.encPass(pass);
+
+//		setPassword(pass, pass);
 		}
-	
 	
 	public boolean authenticate(String pass)
 		{
-		return pass.equals(passwordHashed); //TODO
+		return CreateUser.encPass(pass).equals(passwordHashed); //TODO
 		}
-	
-	public static void createTable(DocubricksSqlConnection conn) throws SQLException
-		{
-		/*
-		if(!conn.tableExists("cloud_users"))
-			{
-			Statement st=conn.createStatement();
-			st.execute(
-					"CREATE TABLE cloud_users (" +
-					"userid VARCHAR(500) PRIMARY KEY,"+
-					"user_password VARCHAR(500) NOT NULL,"+
-					"user_email1 VARCHAR(500) NOT NULL,"+
-					"user_email2 VARCHAR(500) NOT NULL,"+
-					"user_tel VARCHAR(500) NOT NULL,"+
-					"user_orgname VARCHAR(500) NOT NULL,"+
-					"user_firstname VARCHAR(500) NOT NULL,"+
-					"user_lastname VARCHAR(500) NOT NULL,"+
-					"user_address VARCHAR(500) NOT NULL,"+
-					"user_state VARCHAR(500) NOT NULL,"+
-					"user_country VARCHAR(500) NOT NULL"+
-					
-					")");
-			}
-		*/
-		}
-
-
-	
+		
 	}

@@ -38,26 +38,28 @@ public class EditDocument extends DocubricksServlet
 			if(id.trim().equals(""))
 				{
 				doc=new RecordDocument();
-				doc.allocate(session.getConn());
+				doc.allocate(session);
 				//TODO set owner here
 	    	session.fromSession(request.getSession());
-	    	doc.documentOwner=session.session.userEmail;
+	    	doc.documentOwnerID=session.session.userID;
+//	    	doc.documentOwner=session.session.userEmail;
       	
 				}
 			else
 				{
-				doc=RecordDocument.query(session.getConn(), Long.parseLong(id.trim()));
+				doc=session.getDocument(Long.parseLong(id.trim()));
 				}
 			
 			doc.documentDesc=request.getParameter("description");
 			doc.documentName=request.getParameter("name");
 			doc.documentImage=request.getParameter("image");
-					
-			//TODO
-			//doc.document=request.getParameter("tags");
-			doc.isPublic=request.getParameter("published")!=null; //no idea???
+			doc.setTagsFromComma(request.getParameter("tags"));
 			
-			doc.store(session.getConn());
+//			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+//			System.out.println(request.getParameter("ispublic"));
+			doc.isPublic=request.getParameter("ispublic").equals("true");
+			session.daoDocument.update(doc);
+			doc.saveTags(session);
 			
 			retob.put("id", ""+doc.id);
 			response.getWriter().append(retob.toJSONString());

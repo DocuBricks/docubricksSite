@@ -1,3 +1,4 @@
+<%@page import="site.record.RecordUser"%>
 <%@page import="site.DocubricksSite"%>
 	 
 	 
@@ -56,20 +57,22 @@
 						DocubricksSite ws2=new DocubricksSite();
 						ws2.fromSession(request.getSession());
 
-						if(ws2.session.userEmail==null)
+						if(ws2.loggedIn())
 							{
+							RecordUser recuser=ws2.getUserInfo();
+							
 							%>
-							<li><a href="login.jsp">Login</a></li>
-							<li><a href="register.jsp">Register</a></li>
+							<li><% out.println(recuser.emailPrimary==null ? "" : recuser.emailPrimary); %></li>
+							<li><a href="mypage.jsp">My projects</a></li>
+							<li><a href="edituser.jsp">Account settings</a></li>
+							<li><a onclick="return do_logout()">Logout</a></li>
 							<%
 							}
 						else
 							{
 							%>
-							<li><% out.println(ws2.session.userEmail==null ? "" : ws2.session.userEmail); %></li>
-							<li><a href="mypage.jsp">My projects</a></li>
-							<li><a href="edituser.jsp">Account settings</a></li>
-							<li><a onclick="return do_logout()">Logout</a></li>
+							<li><a href="login.jsp">Login</a></li>
+							<li><a href="register.jsp">Register</a></li>
 							<%
 							}
 						

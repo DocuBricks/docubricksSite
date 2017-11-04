@@ -17,8 +17,9 @@ import site.record.RecordUser;
 public class Session implements Serializable
 	{
 	private static final long serialVersionUID = 1L;
-	public String userEmail;
+//	public String userEmail;
 	transient HttpSession session;
+	public Integer userID;
 	
 	public static Session fromSession(HttpSession session)
 		{
@@ -29,7 +30,8 @@ public class Session implements Serializable
 			System.out.println("new session");
 			}
 		else
-			System.out.println("reusing session "+s.userEmail);
+			System.out.println("reusing session "+s.userID);
+//			System.out.println("reusing session "+s.userEmail);
 		s.session=session;
 		return s;
 		}
@@ -39,7 +41,7 @@ public class Session implements Serializable
 		session.setAttribute("s", this);
 		}
 	
-	
+	/*
 	public boolean authenticate(String user, String pass) throws SQLException
 		{
 		RecordUser info=getUserInfo(user);
@@ -51,30 +53,40 @@ public class Session implements Serializable
 			}
 		else
 			return false;
-		}
+		}*/
 	
 	public void logout()
 		{
-		userEmail=null;
+		userID=null;
+//		userEmail=null;
 		toSession();
 		}
 	
 	public RecordUser getUserInfo(DocubricksSite site) throws SQLException
 		{
-		return RecordUser.query(site.getConn(), userEmail);
+		System.out.println(site);
+		System.out.println(userID);
+		//Not quite sure when ID is null
+		if(userID==null)
+			return null;
+		else
+			return site.getUserByID(userID); 
+//		return site.getUserByEmail(userEmail); //TODO: store userID instead!!!!
 		}
 	
+	/*
 	public RecordUser getUserInfo(String userID) throws SQLException
 		{
 		return new RecordUser(); //why?
 //		return UserInfo.query(conn, userID);
-		}
+		}*/
 	
+	/*
 	public void setUserInfo(DocubricksSite site, RecordUser info) throws SQLException
 		{
 		if(userEmail==null)
 			throw new RuntimeException("User is null");
 		info.store(site.getConn());
-		}
+		}*/
 
 	}

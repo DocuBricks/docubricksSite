@@ -30,7 +30,8 @@ public class Logout extends DocubricksServlet
 			{
 			JSONObject retob=new JSONObject();
 	  	session.session=Session.fromSession(request.getSession());
-	  	session.session.userEmail=null;
+	  	session.session.userID=null;
+//	  	session.session.userEmail=null;
 	  	session.session.toSession();
 	  	response.getWriter().append(retob.toJSONString());
 			}

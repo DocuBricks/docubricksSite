@@ -55,10 +55,11 @@ public class UploadZip extends DocubricksServlet
 
 				
       	RecordDocument rec=new RecordDocument();
-				rec.documentOwner=session.session.userEmail;
+				rec.documentOwnerID=session.session.userID;
+//				rec.documentOwner=session.session.userEmail;
 				//rec.documentOwner="mahogny@areta.org";
 				System.out.println("user email "+rec.documentOwner);
-      	rec.allocate(session.getConn());
+      	rec.allocate(session);
 
 				DocumentDirectory docdir=rec.getDir();
 				//TODO delete entry if zip fails
@@ -113,13 +114,13 @@ public class UploadZip extends DocubricksServlet
 	      	rec.documentXML=EvFileUtil.readFile(fileXML);
 	      	fileXML.delete();
 	      	
-	      	rec.store(session.getConn());
+	      	session.daoDocument.update(rec);
 	  			retob.put("id", ""+rec.id);
 					response.getWriter().append(retob.toJSONString());
 	      	}
 	      else
 	      	{
-	      	rec.delete(session.getConn());
+	      	rec.delete(session);
 	      	retob.put("id","-1");
 	      	retob.put("error", "Zip does not contain a docubrick");
 	      	response.getWriter().append(retob.toJSONString());

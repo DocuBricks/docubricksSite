@@ -30,15 +30,16 @@ public class Login extends DocubricksServlet
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			JSONObject retob=new JSONObject();
-			RecordUser docrec=RecordUser.query(session.getConn(), request.getParameter("email"));
-			if(docrec!=null)
+			RecordUser rec=session.getUserByEmail(request.getParameter("email"));
+			if(rec!=null)
 				{
-				if(docrec.passwordHashed.equals(CreateUser.encPass(request.getParameter("password"))) ||
-						docrec.passwordHashed.equals("")) //Password removed - no password needed. quick reset
+				if(rec.passwordHashed.equals(CreateUser.encPass(request.getParameter("password"))) ||
+						rec.passwordHashed.equals("")) //Password removed - no password needed. quick reset
 					{
 		    	retob.put("status","1");
 		    	session.session=Session.fromSession(request.getSession());
-		    	session.session.userEmail=docrec.emailPrimary;
+		    	session.session.userID=rec.id;
+//		    	session.session.userEmail=rec.emailPrimary;
 		    	session.session.toSession();
 					}
 				else

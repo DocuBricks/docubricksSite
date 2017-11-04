@@ -39,7 +39,7 @@
 							<tr>
 								<th>Name&nbsp;&nbsp;</th>
 								<th>Properties&nbsp;&nbsp;</th>
-								<th>Content&nbsp;&nbsp;</th>
+								<!--  <th>Content&nbsp;&nbsp;</th>  -->
 								<th>Description&nbsp;&nbsp;</th>
 							</tr>
 							<tbody id="table_projects">

@@ -38,9 +38,9 @@ public class CreateUser extends DocubricksServlet
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			//If creating new user: check if user exists already
-			boolean isEditing=request.getParameter("name").equals("1");
+			boolean isEditing=request.getParameter("edit").equals("1");
 			String newEmail=request.getParameter("email");
-			RecordUser prevuser=RecordUser.query(session.getConn(), newEmail);
+			RecordUser prevuser=session.getUserByEmail(newEmail);
 			if(isEditing)
 				{
 				//Check if allowed to edit this user
@@ -65,22 +65,29 @@ public class CreateUser extends DocubricksServlet
 				}
 			
 			
-			RecordUser docrec=new RecordUser();
+			RecordUser rec=new RecordUser();
 			if(prevuser!=null)
-				docrec=prevuser;
+				rec=prevuser;
 			
-			docrec.firstName=request.getParameter("name");
-			docrec.lastName=request.getParameter("surname");
-			docrec.emailPrimary=newEmail;//request.getParameter("email");
+			rec.firstName=request.getParameter("name");
+			rec.lastName=request.getParameter("surname");
+			rec.emailPrimary=newEmail;//request.getParameter("email");
 			if(!request.getParameter("password").equals(""))
-				docrec.passwordHashed=encPass(request.getParameter("password"));
+				rec.setPassword(request.getParameter("password"));
 
-			docrec.store(session.getConn());
+			if(isEditing)
+				session.daoUser.update(rec);
+			else
+				{
+				session.daoUser.create(rec);
+				
+				//Log in the new user
+				session.session=Session.fromSession(request.getSession());
+	    	session.session.userID=rec.id;
+//	    	session.session.userEmail=docrec.emailPrimary;
+	    	session.session.toSession();
+				}
 
-			//Log in the new user
-			session.session=Session.fromSession(request.getSession());
-    	session.session.userEmail=docrec.emailPrimary;
-    	session.session.toSession();
 
     	//Return response
 			JSONObject retob=new JSONObject();

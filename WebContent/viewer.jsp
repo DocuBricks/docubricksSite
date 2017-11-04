@@ -36,7 +36,7 @@ ws.fromSession(request.getSession());
 			String id=request.getParameter("id");
 			if(id!=null)
 				{
-				RecordDocument doc=RecordDocument.query(ws.getConn(), Long.parseLong(id));
+				RecordDocument doc=ws.getDocument(Long.parseLong(id));
 				if(doc!=null)
 					{
 					Element e=EvXmlUtil.stringToXml(doc.documentXML);

@@ -51,7 +51,7 @@ public class GetDocumentList extends DocubricksServlet
 				ob.put("name", d.documentName);
 				ob.put("image", d.documentImage);
 				ob.put("description", d.documentDesc);
-				ob.put("tags", d.documentTags);
+				ob.put("tags", d.getTagListComma());
 				ob.put("ispublic", d.isPublic);
 
 				arr.add(ob);

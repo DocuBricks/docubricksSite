@@ -18,7 +18,7 @@ RecordDocument doc=null;
 String id=request.getParameter("id");
 if(id!=null)
 	{
-	doc=RecordDocument.query(ws.getConn(), Long.parseLong(id));
+	doc=ws.getDocument(Long.parseLong(id));
 	if(doc!=null)
 		{
 		/*
@@ -68,21 +68,21 @@ else
 							<div class="form-group">
 								<label class="col-md-4 control-label">Description</label>
 								<div class="col-md-6">
-									<textarea class="form-control" name="description" id="projprop_description"><% out.println(doc.documentDesc); %></textarea>
+									<textarea class="form-control" id="projprop_description"><% out.println(doc.documentDesc); %></textarea>
 								</div>
 							</div>
 
 							<div class="form-group">
 								<label class="col-md-4 control-label">Tags</label>
 								<div class="col-md-6">
-									<input type="text" class="form-control" name="tags" value="<% out.println(doc.documentTags); %>" id="projprop_tags">
+									<input type="text" class="form-control" value="<% out.println(doc.getTagListComma()); %>" id="projprop_tags">
 								</div>
 							</div>
 
 							<div class="form-group">
-								<label class="col-md-4 control-label">Published</label>
+								<label class="col-md-4 control-label">Public</label>
 								<div class="col-md-6">
-									<input type="checkbox" class="form-control" name="published" <% out.println(doc.isPublic ? "checked":""); %> id="projprop_published">
+									<input type="checkbox" class="form-control" <% out.println(doc.isPublic ? "checked":""); %> id="projprop_ispublic">
 								</div>
 							</div>
 

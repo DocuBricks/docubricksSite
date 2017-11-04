@@ -29,15 +29,25 @@ public class EmailPassword extends DocubricksServlet
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			String email=request.getParameter("email");
-			RecordUser docrec=RecordUser.query(session.getConn(), email);
+			RecordUser rec=session.getUserByEmail(email);
 			String status="0";
-			if(docrec!=null)
+			if(rec!=null)
 				{
-				String newpass=""+(int)(Math.random()*1000000);
+				rec.passResetCode=""+
+						(int)(Math.random()*1000000)+(int)(Math.random()*1000000)+
+						(int)(Math.random()*1000000)+(int)(Math.random()*1000000);
+				rec.passResetTime=System.currentTimeMillis();
+				session.daoUser.update(rec);
+
 				
-				SendEmailAmazon.send("noreply@docubricks.com", email, "Your password has been reset to: "+newpass, "DocuBricks password reset");
-				docrec.passwordHashed=CreateUser.encPass(newpass);
-				docrec.store(session.getConn());
+				String url = request.getRequestURL().toString();
+				String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath() + "/";
+				
+				SendEmailAmazon.send(
+						"noreply@docubricks.com", 
+						email, 
+						"DocuBricks password reset",
+						"To reset you password, please go to "+baseURL+"emailpasswordconfirm.jsp?uid="+rec.id+"&code="+rec.passResetCode);
 				
 				status="1";
 				}

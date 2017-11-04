@@ -17,9 +17,15 @@ public class SendEmailAmazon
 	{
 	
 	@SuppressWarnings("deprecation")
-	public static void send(String FROM, String TO, String BODY, String SUBJECT) 
+	public static void send(String FROM, String TO, String SUBJECT, String BODY) 
 		{
-
+		System.out.println("Email-----------------");
+		System.out.println("FROM: "+FROM);
+		System.out.println("TO: "+TO);
+		System.out.println("SUBJECT: "+SUBJECT);
+		System.out.println("BODY: "+BODY);
+		System.out.println("----------------------");
+		
 		// Construct an object to contain the recipient address.
 		Destination destination = new Destination().withToAddresses(new String[]{TO});
 

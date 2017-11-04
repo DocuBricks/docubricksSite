@@ -1,5 +1,6 @@
 package site.servlet;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,42 +47,23 @@ public class DownloadZip extends DocubricksServlet
 				response.sendError(404, "No id given");
 			else
 				{
-				RecordDocument recdoc=RecordDocument.query(session.getConn(), Long.parseLong(id));
+				RecordDocument recdoc=session.getDocument(Long.parseLong(id));
 				DocumentDirectory dir=recdoc.getDir();
 				
 				
 
 		    tempzip=File.createTempFile("foo", "zip");
-//      File tempzip=new File("/home/mahogny/wtf.zip");
 		    
 		    // output file 
 		    ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tempzip));
-				for(File f:dir.listAllFiles())
-					{
-					//TODO a zip entry that ends with / and has no content is a directory!
-					
-					//TODO it might be better to merge with listallfiles code to pull out paths!
-					ZipEntry ze=new ZipEntry(f.getName());
-		      zos.putNextEntry(ze); //relative path!
-		      FileInputStream in = new FileInputStream(f);
-		      byte[] b = new byte[1024];
-		      int count;
-		      while ((count = in.read(b)) > 0) 
-		        zos.write(b, 0, count);
-		      in.close();
-		      zos.closeEntry();
-					}
+		  	zipDirectoryHelper(dir.getRoot(), dir.getRoot(), zos);
 
 				//Write the main index file
 				byte[] projarr=recdoc.documentXML.getBytes(Charset.forName("UTF-8"));
 		    zos.putNextEntry(new ZipEntry("project.docubricks.xml")); 
 		  	zos.write(projarr);
 		    zos.closeEntry();
-		    
 		    //TODO what about the XSLT? put it in too?
-
-				
-				
 		    zos.close();
 
 		    
@@ -108,5 +90,53 @@ public class DownloadZip extends DocubricksServlet
 
 		
 		}
+
+
+
+
+
+
+
+
+
+
+
+	private void zipDirectoryHelper(File rootDirectory, File currentDirectory, ZipOutputStream out) throws Exception
+		{
+		byte[] data = new byte[2048];
+		File[] files = currentDirectory.listFiles();
+		if(files == null) 
+			{
+			// no files were found or this is not a directory
+			} 
+		else 
+			{
+			for(File file : files) 
+				{
+				if(file.isDirectory()) 
+					{
+					zipDirectoryHelper(rootDirectory, file, out);
+					} 
+				else 
+					{
+					FileInputStream fi = new FileInputStream(file);
+
+					//creating structure and avoiding duplicate file names
+					String name = file.getAbsolutePath().replace(rootDirectory.getAbsolutePath(), "");
+
+					ZipEntry entry = new ZipEntry(name);
+					out.putNextEntry(entry);
+					int count;
+					BufferedInputStream origin = new BufferedInputStream(fi,2048);
+					while ((count = origin.read(data, 0 , 2048)) != -1)
+						out.write(data, 0, count);
+					origin.close();
+					}
+				}
+			}
+		}
+
+
+
 
 	}

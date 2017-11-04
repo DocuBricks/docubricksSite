@@ -13,8 +13,47 @@ import java.util.ArrayList;
  */
 public class ConnPool
 	{
+	private ConnPool(){}
+	
+	private static ConnPool p;
+	
+	
 	private ArrayList<DocubricksSqlConnection> pool=new ArrayList<>();
 	private int nc=0;
+	
+	
+
+	
+	private static Object lock=new Object();
+	
+	
+	
+	public static ConnPool getInstance() throws SQLException
+		{
+		synchronized (lock)
+			{
+			if(p==null)
+				{
+				p=new ConnPool();
+				//pooled connection source
+				try
+					{
+					Class.forName("org.postgresql.Driver");
+					}
+				catch (ClassNotFoundException e)
+					{
+					e.printStackTrace();
+					throw new SQLException(e);
+					}
+				
+				
+				
+				
+
+				}
+			return p;
+			}
+		}
 	
 	public synchronized DocubricksSqlConnection get() throws IOException, SQLException
 		{

@@ -4,41 +4,70 @@ do_login = function() {
 	var req = $.getJSON("Login",
 			{email:$("#login_email").val(), password:$("#login_password").val()})
 	.done(function(data) {
-		return do_login_resp(data);
+		if(data.status==1) {
+			window.location="mypage.jsp";
+		}
+		else {
+			alert("Invalid user/password");
+		}
 	});
 	return false;
 };
 
 
-do_login_resp = function(data) {
-	
-	if(data.status==1)
-		{
-		window.location="mypage.jsp";
-		}
-	else
-		alert("Invalid user/password");
-};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 do_resetpassword = function() {
 	var req = $.getJSON("EmailPassword",
-			{email:$("#login_email").val(), password:$("#login_password").val()})
+			{email:$("#email").val()})
 	.done(function(data) {
-		return do_resetpassword_resp(data);
+		if(data.status==1){
+			alert("Password sent");
+			window.location="mypage.jsp";
+		}
+		else {
+			alert("Invalid user");
+		}
+		return false; //needed?
 	});
 	return false;
 };
 
 
-do_resetpassword_resp = function(data) {
-	alert("Password sent");
-	if(data.status==1)
-		alert("Password sent");
-	else
-		alert("Invalid user");
-		window.location="mypage.jsp";
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+do_passwordresetconfirm = function() {
+	if($("#reset_password").val()!=$("#reset_password_confirmation").val()){
+		alert("Passwords are not matching");
+	}
+	else{
+		var req = $.getJSON("EmailPasswordConfirm",
+				{uid:$("#reset_uid").val(), code:$("#reset_code").val(), password:$("#reset_password").val()})
+		.done(function(data) {
+			if(data.status==1){
+				alert("Password reset");
+				window.location="mypage.jsp";
+			}
+			else {
+				alert("Failed to reset password");
+			}
+			return false; //needed?
+		});
+	}
+	return false;
 };
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,15 +76,10 @@ do_resetpassword_resp = function(data) {
 do_logout = function() {
 	var req = $.getJSON("Logout")
 	.done(function(data) {
-		return do_logout_resp(data);
+		window.location="index.jsp";
+		return false;
 	});
 	return false;
-};
-
-
-do_logout_resp = function(data) {
-	
-	window.location="index.jsp";
 };
 
 
@@ -80,22 +104,17 @@ do_register = function() {
 			password:$("#register_password").val()
 		})
 		.done(function(data) {
-			return do_register_resp(data);
+			if(data.status==1){
+				window.location="mypage.jsp";
+			}
+			else{
+				alert("Could not create user");
+			}
 		});
 	}
 	return false;
 };
 
-
-do_register_resp = function(data) {
-	
-	if(data.status==1)
-		{
-		window.location="mypage.jsp";
-		}
-	else
-		alert("Could not create user");
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,26 +130,24 @@ do_edituser = function() {
 	else{
 		var req = $.getJSON("CreateUser",{
 			edit:"1", 
+			id:$("#register_id").val(), 
 			name:$("#register_name").val(), 
 			surname:$("#register_surname").val(), 
 			email:$("#register_email").val(), 
 			password:$("#register_password").val()
 		})
 		.done(function(data) {
-			return do_edituser_resp(data);
+			if(data.status==1){
+				window.location="mypage.jsp";
+			}
+			else{
+				alert("Could not update user");
+			}
 		});
 }
 return false;
 };
 
-
-do_edituser_resp = function(data) {
-	if(data.status==1){
-		window.location="mypage.jsp";
-	}
-	else
-		alert("Could not update user");
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,8 +209,8 @@ do_editproject = function() {
 		name:$("#projprop_name").val(),
 		image:$("#projprop_image").val(),
 		description:$("#projprop_description").val(),
-		published:$("#projprop_published").checked
-		//tags
+		tags:$("#projprop_tags").val(),
+		ispublic:$("#projprop_ispublic").is(":checked")
 	})
 	.done(function(data) {
 		window.location="mypage.jsp";
