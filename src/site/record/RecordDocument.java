@@ -46,7 +46,7 @@ public class RecordDocument
 	//TODO .. maybe there should be multiple owners of a document?
 	
 	@DatabaseField(columnName="document_ispublic")
-	public boolean isPublic=true;
+	public boolean isPublic=false;
 
 	@DatabaseField(columnName="document_isfrozen")
 	public boolean isFrozen=false;
@@ -115,6 +115,11 @@ public class RecordDocument
 	//List only for this user, todo
 	public static List<RecordDocument> getUserDocuments(DocubricksSite session) throws SQLException
 		{
+		QueryDocument q=new QueryDocument();
+		q.setOwner(session.session.userID);
+		return q.get(session);
+		
+		/*
 		HashMap<String,Object> m=new HashMap<>();
 		m.put("document_ownerid", session.session.userID); 
 //		m.put("document_owner", session.session.userEmail);   //Should not be email!!!
@@ -125,6 +130,7 @@ public class RecordDocument
 			doc.loadTags(session);
 		
 		return docs;
+		*/
 		}
 		
 	

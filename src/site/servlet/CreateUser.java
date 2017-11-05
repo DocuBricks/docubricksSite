@@ -38,62 +38,30 @@ public class CreateUser extends DocubricksServlet
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			//If creating new user: check if user exists already
-			boolean isEditing=request.getParameter("edit").equals("1");
 			String newEmail=request.getParameter("email");
 			RecordUser prevuser=session.getUserByEmail(newEmail);
-			if(isEditing)
-				{
-				//Check if allowed to edit this user
-				/*
-				if(!session.session.userEmail.equals(request.getParameter("email")))
-					{
-					JSONObject retob=new JSONObject();
-		    	retob.put("status","notallowed");
-		    	response.getWriter().append(retob.toJSONString());
-					}
-					*/
-				newEmail=prevuser.emailPrimary;  //create a new user id SEPARATE from email to allow easy updating
-				}
-			else
-				{
-				if(prevuser!=null)
-					{
-					JSONObject retob=new JSONObject();
-		    	retob.put("status","alreadyexists");
-		    	response.getWriter().append(retob.toJSONString());
-					}
-				}
-			
-			
-			RecordUser rec=new RecordUser();
+			JSONObject retob=new JSONObject();
 			if(prevuser!=null)
-				rec=prevuser;
-			
-			rec.firstName=request.getParameter("name");
-			rec.lastName=request.getParameter("surname");
-			rec.emailPrimary=newEmail;//request.getParameter("email");
-			if(!request.getParameter("password").equals(""))
-				rec.setPassword(request.getParameter("password"));
-
-			if(isEditing)
-				session.daoUser.update(rec);
+	    	retob.put("status","alreadyexists");
 			else
 				{
+				RecordUser rec=new RecordUser();
+				rec.firstName=request.getParameter("name");
+				rec.lastName=request.getParameter("surname");
+				rec.emailPrimary=newEmail;
+				if(!request.getParameter("password").equals(""))
+					rec.setPassword(request.getParameter("password"));
 				session.daoUser.create(rec);
-				
+					
 				//Log in the new user
 				session.session=Session.fromSession(request.getSession());
 	    	session.session.userID=rec.id;
-//	    	session.session.userEmail=docrec.emailPrimary;
 	    	session.session.toSession();
+	    	retob.put("status","1");
 				}
 
-
     	//Return response
-			JSONObject retob=new JSONObject();
-    	retob.put("status","1");
     	response.getWriter().append(retob.toJSONString());
-			
 			}
 		catch (Exception e)
 			{

@@ -32,10 +32,6 @@ ALTER TABLE docubricks_user DROP constraint docubricks_user_pkey;
 ALTER TABLE docubricks_user ADD PRIMARY KEY (user_id);
 alter table docubricks_user alter user_id set default nextval('docubricks_user_id_seq');
 
-/////// New fields
-ALTER TABLE docubricks_user ADD user_passresetcode TEXT;
-ALTER TABLE docubricks_user ADD user_passresettime BIGINT;
-
 
 
 
@@ -62,40 +58,10 @@ CREATE TABLE docubricks_document
   document_shortlink    text NOT NULL
 );
 
-##### Transfer ID to use
-ALTER TABLE docubricks_document ADD document_ownerid int;
-UPDATE docubricks_document
-SET document_ownerid = (SELECT user_id FROM docubricks_user WHERE user_email=document_owner);
-ALTER TABLE docubricks_document DROP document_owner;
-
-/////// Document ID update for serial
+### Document ID update for serial
 create sequence docubricks_document_id_seq;
 alter table docubricks_document alter document_id set default nextval('docubricks_document_id_seq');
 Select setval('docubricks_document_id_seq', 9134926926759813121 );
-
-//////// New fields
-ALTER TABLE docubricks_document ADD document_tags TEXT;
-UPDATE docubricks_document SET document_tags='';
-ALTER TABLE docubricks_document ADD document_ispublic BOOLEAN;
-UPDATE docubricks_document SET document_ispublic=TRUE;
-ALTER TABLE docubricks_document ADD document_isfrozen BOOLEAN;
-UPDATE docubricks_document SET document_isfrozen=FALSE;
-
-
-
-
-
-
-CREATE TABLE docubricks_document_tags
-(
-  tag_id				SERIAL PRIMARY KEY,
-  document_id			bigint,
-  document_tag			text NOT NULL,
-  FOREIGN KEY (document_id) REFERENCES docubricks_document(document_id)
-);
-create sequence docubricks_document_tags_id_seq;
-alter table docubricks_document_tags alter tag_id set default nextval('docubricks_document_tags_id_seq');
-##### the ORM needs this sequence
 
 
 
@@ -112,45 +78,25 @@ CREATE TABLE docubricks_document_comment
 );
 
 
+
+
+
+
+
+CREATE TABLE docubricks_document_tags
+ (
+   tag_id				bigint PRIMARY KEY,
+   document_id			bigint,
+   document_tag			text NOT NULL,
+   FOREIGN KEY (document_id) REFERENCES docubricks_document(document_id) ON DELETE CASCADE
+ );
+create sequence docubricks_document_tags_id_seq;
+alter table docubricks_document_tags alter tag_id set default nextval('docubricks_document_tags_id_seq');
+### the ORM needs this sequence
+ 
+ 
+
+ 
+
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mahogny;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO mahogny;
-
-
-#  CONSTRAINT docubricks_document_brick_owner_fkey FOREIGN KEY (brick_owner)
-#      REFERENCES docubricks_user (user_email) MATCH SIMPLE
-#      ON UPDATE NO ACTION ON DELETE NO ACTION;
-
-
-
-
-
-//////////////////// CRAP ///////////////////////
-
-
-
-ALTER TABLE docubricks_document ADD document_nid SERIAL;
-ALTER TABLE docubricks_document DROP constraint docubricks_document_pkey;
-ALTER TABLE docubricks_document ADD PRIMARY KEY (document_nid);
-
-
-ALTER TABLE docubricks_document DROP document_nid;
-ALTER TABLE docubricks_document ADD PRIMARY KEY (document_id);
-
-
-create sequence docubricks_document_id_seq;
-ALTER TABLE bagger
-        ALTER COLUMN document_id TYPE SERIAL USING document_id::integer
-        , ALTER COLUMN player_id SET NOT NULL
-        , ALTER COLUMN player_id SET DEFAULT nextval('player_id_seq')
-        ;
-ALTER SEQUENCE player_id_seq
-        OWNED BY bagger.player_id
-        ;
-   --
-   -- reset the sequence to containe the maximum occuring player_id in the table
-   --
-SELECT setval('player_id_seq', mx.mx)
-FROM (SELECT MAX(player_id) AS mx FROM bagger) mx
-        ;
-SELECT * FROM bagger;
-\d bagger

@@ -57,10 +57,9 @@
 						DocubricksSite ws2=new DocubricksSite();
 						ws2.fromSession(request.getSession());
 
-						if(ws2.loggedIn())
+						RecordUser recuser=ws2.getUserInfo();
+						if(recuser!=null)
 							{
-							RecordUser recuser=ws2.getUserInfo();
-							
 							%>
 							<li><% out.println(recuser.emailPrimary==null ? "" : recuser.emailPrimary); %></li>
 							<li><a href="mypage.jsp">My projects</a></li>

@@ -530,7 +530,6 @@ class Brick extends React.Component {
             addField("Abstract", brick.abstract);
         }
         addField("Description", brick.long_description);
-        mnodes.push(React.createElement("p", { key: brickkey + "_brickabstract" }, brick.abstract));
         mnodes.push(React.createElement(Files, { key: brickkey + "_files", proj: proj, files: brick.files, basekey: brickkey }));
         addField("License", brick.license);
         addField("Notes", brick.notes);
@@ -600,12 +599,21 @@ class Brick extends React.Component {
                     </div>);
         }
         */
-        //All the instructions
-        var instrnodes = [];
-        for (let instr of brick.instructions) {
+        //All the instructions. Put Assembly before everything else if it exists
+        var addinstr = function (instr) {
             instrnodes.push(React.createElement("div", { key: brickkey + "_" + instr.name },
                 React.createElement(InstructionList, { proj: proj, brick: brick, part: null, instr: instr })));
+        };
+        var instrnodes = [];
+        for (let instr of brick.instructions) {
+            if (instr.name == "assembly_instruction")
+                addinstr(instr);
         }
+        for (let instr of brick.instructions) {
+            if (instr.name != "assembly_instruction")
+                addinstr(instr);
+        }
+        //Return everything in this block
         var ret = React.createElement("div", null,
             React.createElement("div", { className: "brickdiv" },
                 React.createElement("h1", { id: "brick_" + brickid }, brick.name)),

@@ -86,6 +86,15 @@ else
 								</div>
 							</div>
 
+							<div class="form-group">
+								<label class="col-md-4 control-label">Short link*</label>
+								<div class="col-md-6">
+									<textarea class="form-control" id="projprop_shortlink"><% out.println(doc.documentShortLink); %></textarea>
+									<br/>
+									* The short link will be https://docubricks.org/project/... , and we guarantee that this name
+									is stable for e.g. publications
+								</div>
+							</div>
 
 
 							<div class="form-group">

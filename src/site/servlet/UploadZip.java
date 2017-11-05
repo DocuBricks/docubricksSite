@@ -41,31 +41,24 @@ public class UploadZip extends DocubricksServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
+		RecordDocument rec=null;
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			JSONObject retob=new JSONObject();
-
-			/*
-			String file=request.getParameter("description");
-			if(file==null)
-				response.sendError(404, "No zip given");
-			else*/
+			session.fromSession(request.getSession());
+			
+			Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
+//		    String fileName = filePart.getSubmittedFileName();
+			if(filePart!=null)
 				{
-				session.fromSession(request.getSession());
-
-				
-      	RecordDocument rec=new RecordDocument();
+      	rec=new RecordDocument();
 				rec.documentOwnerID=session.session.userID;
-//				rec.documentOwner=session.session.userEmail;
-				//rec.documentOwner="mahogny@areta.org";
 				System.out.println("owner id "+rec.documentOwnerID);
       	rec.allocate(session);
 
 				DocumentDirectory docdir=rec.getDir();
 				//TODO delete entry if zip fails
 				
-				Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
-//		    String fileName = filePart.getSubmittedFileName();
 		    InputStream fis = filePart.getInputStream();
 				
 				final int BUFFER = 2048;
@@ -124,13 +117,32 @@ public class UploadZip extends DocubricksServlet
 	      	retob.put("id","-1");
 	      	retob.put("error", "Zip does not contain a docubrick");
 	      	response.getWriter().append(retob.toJSONString());
-//					response.sendError(404, "Zip does not contain a docubrick");
+//						response.sendError(404, "Zip does not contain a docubrick");
 	      	}
-	      
+				
+				}
+			else
+				{
+				response.sendError(404, "Zip does not contain a docubrick");
 				}
 			}
 		catch (Exception e)
 			{
+			//Delete the document if it was created but upload failed
+			if(rec!=null)
+				{
+				try(DocubricksSite session=new DocubricksSite())
+					{
+					rec.delete(session);
+					}
+				catch (Exception e2)
+					{
+					e2.printStackTrace();
+					throw new ServletException(e.getMessage());
+					}
+				}
+				
+			
 			e.printStackTrace();
 			throw new ServletException(e.getMessage());
 			}

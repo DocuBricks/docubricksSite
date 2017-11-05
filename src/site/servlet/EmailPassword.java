@@ -28,8 +28,8 @@ public class EmailPassword extends DocubricksServlet
 		{
 		try(DocubricksSite session=new DocubricksSite())
 			{
-			String email=request.getParameter("email");
-			RecordUser rec=session.getUserByEmail(email);
+			String toEmail=request.getParameter("email");
+			RecordUser rec=session.getUserByEmail(toEmail);
 			String status="0";
 			if(rec!=null)
 				{
@@ -44,13 +44,19 @@ public class EmailPassword extends DocubricksServlet
 				String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath() + "/";
 				
 				SendEmailAmazon.send(
-						"noreply@docubricks.com", 
-						email, 
+						"mahogny@areta.org", //						"noreply@docubricks.com", 
+						toEmail, 
 						"DocuBricks password reset",
-						"To reset you password, please go to "+baseURL+"emailpasswordconfirm.jsp?uid="+rec.id+"&code="+rec.passResetCode);
+						"Someone has requested a reset of your DocuBricks password. If you wish to do so, please proceed "
+								+ "<a href=\""+baseURL+"emailpasswordconfirm.jsp?uid="+rec.id+"&code="+rec.passResetCode+"\">"
+								+ "here"
+								+ "</a>.<br/>"
+								+ "If you did not request this change then someone might be attempting to steal your account");
 				
 				status="1";
 				}
+			else
+				status="0";
 			
     	//Return response
 			JSONObject retob=new JSONObject();

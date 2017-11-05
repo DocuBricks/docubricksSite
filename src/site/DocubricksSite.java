@@ -196,9 +196,10 @@ public class DocubricksSite implements AutoCloseable
 			}
 		}
 
-	
-	public boolean loggedIn()
+	/*
+	public boolean loggedIn() throws SQLException
 		{
-		return session.userID!=null;
-		}
+		//Sub-optimal that the second test is needed
+		return session.userID!=null && session.getUserInfo(this)!=null;
+		}*/
 	}

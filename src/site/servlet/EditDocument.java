@@ -1,6 +1,8 @@
 package site.servlet;
 
 import java.io.IOException;
+import java.util.HashSet;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +34,6 @@ public class EditDocument extends DocubricksServlet
 			JSONObject retob=new JSONObject();
 
 			String id=request.getParameter("id").trim();
-			System.out.println("-----"+id.trim()+"----");
 			
 			RecordDocument doc;
 			if(id.trim().equals(""))
@@ -49,20 +50,43 @@ public class EditDocument extends DocubricksServlet
 				{
 				doc=session.getDocument(Long.parseLong(id.trim()));
 				}
+
+			//Check which shortlinks are used already
+			HashSet<String> usedShortLinks=new HashSet<>();
+			for(RecordDocument o:session.daoDocument.queryForAll()) 
+				{
+				//TODO: only pull out the relevant info
+				if(o.id!=doc.id)
+					usedShortLinks.add(o.documentShortLink);
+				}
 			
-			doc.documentDesc=request.getParameter("description");
-			doc.documentName=request.getParameter("name");
-			doc.documentImage=request.getParameter("image");
-			doc.setTagsFromComma(request.getParameter("tags"));
+			if(!doc.documentShortLink.equals("") && usedShortLinks.contains(doc.documentShortLink))
+				{
+				retob.put("id", ""+doc.id);
+				retob.put("success", "0");
+				response.getWriter().append(retob.toJSONString());
+				System.err.println("Tried to set the same short link as another project");
+				}
+			else
+				{
+				doc.documentDesc=request.getParameter("description");
+				doc.documentName=request.getParameter("name");
+				doc.documentImage=request.getParameter("image");
+				doc.setTagsFromComma(request.getParameter("tags"));
+				doc.documentShortLink=request.getParameter("shortlink");
+				
+				
+//				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+//				System.out.println(request.getParameter("ispublic"));
+				doc.isPublic=request.getParameter("ispublic").equals("true");
+				session.daoDocument.update(doc);
+				doc.saveTags(session);
+				
+				retob.put("id", ""+doc.id);
+				retob.put("success", "1");
+				response.getWriter().append(retob.toJSONString());
+				}
 			
-//			System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-//			System.out.println(request.getParameter("ispublic"));
-			doc.isPublic=request.getParameter("ispublic").equals("true");
-			session.daoDocument.update(doc);
-			doc.saveTags(session);
-			
-			retob.put("id", ""+doc.id);
-			response.getWriter().append(retob.toJSONString());
 
 			
 			}

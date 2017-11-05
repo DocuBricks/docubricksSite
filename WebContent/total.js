@@ -26,11 +26,11 @@ do_resetpassword = function() {
 			{email:$("#email").val()})
 	.done(function(data) {
 		if(data.status==1){
-			alert("Password sent");
-			window.location="mypage.jsp";
+			alert("A link to reset your password has been sent to your email");
+			window.location=".";
 		}
 		else {
-			alert("Invalid user");
+			alert("Failed to reset password - Wrong email?");
 		}
 		return false; //needed?
 	});
@@ -108,6 +108,8 @@ do_register = function() {
 				window.location="mypage.jsp";
 			}
 			else{
+//		    	retob.put("status","alreadyexists");
+
 				alert("Could not create user");
 			}
 		});
@@ -128,9 +130,8 @@ do_edituser = function() {
 		alert("Passwords are not matching");
 		}
 	else{
-		var req = $.getJSON("CreateUser",{
-			edit:"1", 
-			id:$("#register_id").val(), 
+		var req = $.getJSON("EditUser",{
+			uid:$("#register_id").val(), 
 			name:$("#register_name").val(), 
 			surname:$("#register_surname").val(), 
 			email:$("#register_email").val(), 
@@ -141,7 +142,7 @@ do_edituser = function() {
 				window.location="mypage.jsp";
 			}
 			else{
-				alert("Could not update user");
+				alert("Could not update user information");
 			}
 		});
 }
@@ -190,6 +191,7 @@ do_deletedocument = function() {
 	if (confirm('Are you sure you want to delete this project?')) {
 		var req = $.getJSON("DeleteDocument",{id:$("#deletedocument_id").val()})
 		.done(function(data) {
+			//alert("Project deleted");
 			window.location="mypage.jsp";
 		});
 	} else {
@@ -210,6 +212,7 @@ do_editproject = function() {
 		image:$("#projprop_image").val(),
 		description:$("#projprop_description").val(),
 		tags:$("#projprop_tags").val(),
+		shortlink:$("#projprop_shortlink").val(),
 		ispublic:$("#projprop_ispublic").is(":checked")
 	})
 	.done(function(data) {
@@ -264,26 +267,47 @@ do_uploadprojimage = function() {
 
 
 
+//if($("#reset_password").val()!=$("#reset_password_confirmation").val()){
 
+function validatePassword(email,pass, pass2){
+	
+	if(pass!=pass2){
+		return "Passwords do not match";
+	}
+	
+	
+	
+	/*
+	 * 
+	 * if(form.pwd1.value == form.username.value) {
+        alert("Error: Password must be different from Username!");
+        form.pwd1.focus();
+        return false;
+      }
+      
+	   re = /[0-9]/;
+	      if(!re.test(form.pwd1.value)) {
+	        alert("Error: password must contain at least one number (0-9)!");
+	        form.pwd1.focus();
+	        return false;
+	      }
+	      re = /[a-z]/;
+	      if(!re.test(form.pwd1.value)) {
+	        alert("Error: password must contain at least one lowercase letter (a-z)!");
+	        form.pwd1.focus();
+	        return false;
+	      }
+	      re = /[A-Z]/;
+	      if(!re.test(form.pwd1.value)) {
+	        alert("Error: password must contain at least one uppercase letter (A-Z)!");
+	        form.pwd1.focus();
+	        return false;
+	      }
+	      */
+	
+	return "";
+}
 
-/*
-
-//Function to submit to. 
-
-function createuser(form) 
-	{
-	//check that passwords match and are not null
-	
-	//check name is not null
-	
-	//check email is valid
-	
-	
-	//now submit to the server
-	
-        //form.action = form_action;
-    }
-*/
 
 function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

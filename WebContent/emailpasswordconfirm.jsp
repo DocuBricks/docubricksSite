@@ -17,7 +17,7 @@
 							<input type="hidden" id="reset_code" value="<% out.println(request.getParameter("code")); %>" id="projprop_id">
 
 							<div class="form-group">
-								<label class="col-md-4 control-label">Password (if changing)</label>
+								<label class="col-md-4 control-label">New Password</label>
 								<div class="col-md-6">
 									<input type="password" class="form-control" id="reset_password">
 								</div>

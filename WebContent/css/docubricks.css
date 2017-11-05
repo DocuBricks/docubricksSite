@@ -1,16 +1,13 @@
-/* bootswatch moved these files - external link not reliable */
-/*
-@import url("bootswatch/yeti.bootstrap.min.css");
-@import url("bootswatch/paper.bootstrap.min.css");
-@import url("bootswatch/journal.bootstrap.min.css");
-@import url("bootswatch/darkly.bootstrap.min.css");
-@import url("bootswatch/cosmo.bootstrap.min.css");     down-arrow in menu from here. does not work. wrong encoding?
-*/
 @import url("https://bootswatch.com/3/yeti/bootstrap.min.css");
+
 @import url("https://bootswatch.com/3/paper/bootstrap.min.css");
+
 @import url("https://bootswatch.com/3/journal/bootstrap.min.css");
+
 @import url("https://bootswatch.com/3/darkly/bootstrap.min.css");
+
 @import url("https://bootswatch.com/3/cosmo/bootstrap.min.css");
+
 
 .all{
   max-width: 1300px;

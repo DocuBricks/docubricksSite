@@ -7,9 +7,9 @@
 DocubricksSite ws2=new DocubricksSite();
 ws2.fromSession(request.getSession());
 
-if(ws2.loggedIn())
+RecordUser user=ws2.session.getUserInfo(ws2);
+if(user!=null)
 	{
-	RecordUser user=ws2.session.getUserInfo(ws2);
 	
 	%>
 	
@@ -23,26 +23,26 @@ if(ws2.loggedIn())
 	
 							<form class="form-horizontal" role="form" method="POST" onsubmit="return do_edituser()">
 
-								<input type="hidden" name="register_id" value="<% out.println(user.id); %>" id="projprop_id">
+								<input type="hidden" value="<% out.println(user.id); %>" id="register_id">
 	
 								<div class="form-group">
 									<label class="col-md-4 control-label">First Name</label>
 									<div class="col-md-6">
-										<input type="text" class="form-control" name="name" value="<% out.println(user.firstName); %>" id="register_name">
+										<input type="text" class="form-control" value="<% out.println(user.firstName); %>" id="register_name">
 									</div>
 								</div>
 	
 								<div class="form-group">
 									<label class="col-md-4 control-label">Last Name</label>
 									<div class="col-md-6">
-										<input type="text" class="form-control" name="surname" value="<% out.println(user.lastName); %>" id="register_surname">
+										<input type="text" class="form-control" value="<% out.println(user.lastName); %>" id="register_surname">
 									</div>
 								</div>
 	
 								<div class="form-group">
 									<label class="col-md-4 control-label">E-Mail Address</label>
 									<div class="col-md-6">
-										<input type="email" class="form-control" name="email" value="<% out.println(user.emailPrimary); %>" id="register_email">
+										<input type="email" class="form-control" value="<% out.println(user.emailPrimary); %>" id="register_email">
 									</div>
 								</div>
 	

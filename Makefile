@@ -16,3 +16,7 @@ upload:
 #	scp /home/mahogny/eclipse/docubricksSite.war ubuntu@docubricks.org:/home/ubuntu/apache-tomcat-7.0.68/webapps/ROOT.war
 	scp docubricks.war ubuntu@docubricks.org:/home/ubuntu/apache-tomcat-7.0.68/webapps/ROOT.war
 	#todo: an ant file to build the war file instead
+
+
+r:
+	rsync -avzhe ssh --progress ./ ubuntu@ec2-52-41-241-68.us-west-2.compute.amazonaws.com:/home/ubuntu/r
