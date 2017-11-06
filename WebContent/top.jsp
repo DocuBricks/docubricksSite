@@ -1,6 +1,28 @@
 <%@page import="site.record.RecordUser"%>
 <%@page import="site.DocubricksSite"%>
-	 
+
+<script>
+	<%
+	DocubricksSite ws2=new DocubricksSite();
+	ws2.fromSession(request.getSession());
+
+	RecordUser recuser=ws2.getUserInfo();
+	if(recuser!=null)
+		{
+		%>
+		var current_uid=<% out.print(recuser.id); %>;
+		var isadmin=<% out.print(recuser.isAdmin); %>
+		<%
+		}	
+	else
+		{
+		%>
+		var current_uid=-1;
+		var isadmin=false;
+		<%
+		}
+	%>
+</script>	 
 	 
 </head>
 <body>
@@ -54,10 +76,6 @@
 						<ul class="dropdown-menu" role="menu">
 						
 						<%
-						DocubricksSite ws2=new DocubricksSite();
-						ws2.fromSession(request.getSession());
-
-						RecordUser recuser=ws2.getUserInfo();
 						if(recuser!=null)
 							{
 							%>
@@ -65,7 +83,9 @@
 							<li><a href="mypage.jsp">My projects</a></li>
 							<li><a href="edituser.jsp">Account settings</a></li>
 							<li><a onclick="return do_logout()">Logout</a></li>
-							<%
+							<% 
+							if(recuser.isAdmin)
+								out.println("<li>Has admin powers</li>"); 
 							}
 						else
 							{

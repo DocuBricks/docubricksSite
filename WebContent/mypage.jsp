@@ -9,7 +9,13 @@
 %>
 
 <jsp:include page="header.html" />
-<script src="mypage.js"></script>
+<!--   src="mypage.js" -->
+<script>
+$(function() 
+		{
+		list_projects();
+		});
+</script>
 <jsp:include page="top.jsp" />
 
 

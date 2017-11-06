@@ -21,7 +21,7 @@ public class RecordUser
 	public String passwordHashed="";
 
 	//@DatabaseField(columnName="user_password")
-	public String organization="";
+	//public String organization="";
 	
 	@DatabaseField(columnName="user_name")
 	public String firstName;
@@ -58,26 +58,14 @@ public class RecordUser
 	
 	
 	
-	
-	
-/*
-	public boolean setPassword(String pass1, String pass2)
-		{
-		if(pass1.equals(pass2))
-			return false;
-		passwordHashed=pass1; //TODO   .... WTF?  since when is it not hashed??
-		return true;
-		}*/
 	public void setPassword(String pass)
 		{
 		passwordHashed=CreateUser.encPass(pass);
-
-//		setPassword(pass, pass);
 		}
 	
 	public boolean authenticate(String pass)
 		{
-		return CreateUser.encPass(pass).equals(passwordHashed); //TODO
+		return CreateUser.encPass(pass).equals(passwordHashed);
 		}
 		
 	}

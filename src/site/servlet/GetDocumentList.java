@@ -14,6 +14,7 @@ import net.minidev.json.JSONObject;
 import site.DocubricksSite;
 import site.record.QueryDocument;
 import site.record.RecordDocument;
+import site.record.RecordDocumentTag;
 import site.record.RecordUser;
 
 /**
@@ -37,20 +38,6 @@ public class GetDocumentList extends DocubricksServlet
 			session.fromSession(request.getSession());
 			RecordUser user=session.getUserInfo();
 			
-			/*
-			if(request.getParameter("ownerid")!=null)
-				{
-				if(user!=null)
-					{
-					int ownerid=Integer.parseInt(request.getParameter("ownerid"));
-					
-					if(user.id==ownerid || user.isAdmin)
-						isRootOrOwner=true;
-					}
-				}*/
-			
-			/// public???
-			
 			QueryDocument q=new QueryDocument();
 			
 			//Parameter: owner
@@ -63,23 +50,6 @@ public class GetDocumentList extends DocubricksServlet
 					if(user.id==ownerid || user.isAdmin)
 						isRootOrOwner=true;
 				}
-				/*
-				if(user!=null)
-					{
-					int ownerid=Integer.parseInt(request.getParameter("ownerid"));
-					
-					if(user.id==ownerid || user.isAdmin)
-						q.setOwner(ownerid);
-					else
-						{
-						System.err.println("User not logged in tried to show his/her projects");
-						response.setContentType("application/json");
-						JSONArray arr=new JSONArray();
-						response.getWriter().append(arr.toJSONString());
-						q=null;
-						}
-					}
-				}*/
 			
 			//Parameter: also show nonpublic?
 			if(request.getParameter("alsoprivate")!=null && isRootOrOwner)
@@ -103,6 +73,11 @@ public class GetDocumentList extends DocubricksServlet
 				ob.put("isfrozen", d.isFrozen);
 				ob.put("shortlink", d.documentShortLink);
 
+				JSONArray arrtags=new JSONArray();
+				for(RecordDocumentTag t:d.tags)
+					arrtags.add(t.documentTag);
+				ob.put("tags", arrtags);
+				
 				arr.add(ob);
 				}
 			response.setContentType("application/json");

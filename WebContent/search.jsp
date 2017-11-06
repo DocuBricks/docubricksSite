@@ -1,3 +1,5 @@
+<%@page import="site.record.RecordDocumentTag"%>
+<%@page import="site.record.QueryDocument"%>
 <%@page import="site.record.RecordUser"%>
 <%@page import="java.util.List"%>
 <%@page import="site.DocubricksSite"%>
@@ -19,7 +21,8 @@
 			<%
 			DocubricksSite ws=new DocubricksSite();
 			ws.fromSession(request.getSession());
-			List<RecordDocument> listdocs=RecordDocument.searchDocuments(ws,"");
+			List<RecordDocument> listdocs=new QueryDocument().get(ws);
+			//.searchDocuments(ws,"");
 			
 			for(RecordDocument doc:listdocs)
 				{
@@ -59,7 +62,19 @@
 									title=""><% out.println(doc.documentName); %></a>
 							</h3>
 							<div class="excerpt"><% out.println(doc.documentDesc); %></div>
+							<%
+							if(!doc.tags.isEmpty())
+								{
+								out.print("<br/><b>Tags: </b>");
+								for(RecordDocumentTag t:doc.tags)
+									{
+									out.print(t.documentTag);
+									out.print("&nbsp;&nbsp;&nbsp;");
+									}
+								}
+							%>
 						</div>
+						
 						<span class="clearfix borda"></span>
 					</article>
 					<%
