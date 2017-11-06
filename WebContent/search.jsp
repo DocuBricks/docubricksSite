@@ -21,8 +21,18 @@
 			<%
 			DocubricksSite ws=new DocubricksSite();
 			ws.fromSession(request.getSession());
+			
+			//To check if we can edit the document later
+			RecordUser userinfo=ws.getUserInfo();
+			boolean isAdmin=false;
+			if(userinfo!=null && userinfo.isAdmin)
+				isAdmin=true;
+			long currentUserID=-1;
+			if(userinfo!=null)
+				currentUserID=userinfo.id;
+			
+			
 			List<RecordDocument> listdocs=new QueryDocument().get(ws);
-			//.searchDocuments(ws,"");
 			
 			for(RecordDocument doc:listdocs)
 				{
@@ -43,14 +53,12 @@
 								class="thumbnail center-block img-responsive" />
 							</a>
 							<%
-							RecordUser userinfo=ws.getUserInfo();
-							if(userinfo!=null && userinfo.isAdmin)
+							if(isAdmin || currentUserID==doc.documentOwnerID)
 								{
 								%>
-								<br/>
 								<form action="projectproperties.jsp">
-									<input type="hidden" name="id" value="<% out.println(doc.id); %>"/>
-									<button type="submit">Edit</button>
+									<input type="hidden" name="id" value="<% out.print(doc.id); %>"/>
+									<button type="submit">Edit properties</button>
 								</form>
 								<%
 								}

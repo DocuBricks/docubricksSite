@@ -53,11 +53,11 @@ do_passwordresetconfirm = function() {
 				{uid:$("#reset_uid").val(), code:$("#reset_code").val(), password:$("#reset_password").val()})
 		.done(function(data) {
 			if(data.status==1){
-				alert("Password reset");
+				alert("Your password has been updated");
 				window.location="mypage.jsp";
 			}
 			else {
-				alert("Failed to reset password");
+				alert("Failed to update password");
 			}
 			return false; //needed?
 		});
