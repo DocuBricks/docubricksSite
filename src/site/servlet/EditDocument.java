@@ -60,7 +60,8 @@ public class EditDocument extends DocubricksServlet
 					usedShortLinks.add(o.documentShortLink);
 				}
 			
-			if(!doc.documentShortLink.equals("") && usedShortLinks.contains(doc.documentShortLink))
+			String newshortlink=request.getParameter("shortlink");
+			if(!newshortlink.equals("") && usedShortLinks.contains(newshortlink))
 				{
 				retob.put("id", ""+doc.id);
 				retob.put("success", "0");
@@ -69,16 +70,16 @@ public class EditDocument extends DocubricksServlet
 				}
 			else
 				{
-				doc.documentDesc=request.getParameter("description");
-				doc.documentName=request.getParameter("name");
-				doc.documentImage=request.getParameter("image");
-				doc.setTagsFromComma(request.getParameter("tags"));
-				doc.documentShortLink=request.getParameter("shortlink");
+				doc.documentDesc=request.getParameter("description").trim();
+				doc.documentName=request.getParameter("name").trim();
+				doc.documentImage=request.getParameter("image").trim();
+				doc.setTagsFromComma(request.getParameter("tags").trim());
+				doc.documentShortLink=newshortlink.trim();
 				
 				
 //				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 //				System.out.println(request.getParameter("ispublic"));
-				doc.isPublic=request.getParameter("ispublic").equals("true");
+				doc.isPublic=request.getParameter("ispublic").trim().equals("true");
 				session.daoDocument.update(doc);
 				doc.saveTags(session);
 				

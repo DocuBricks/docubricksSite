@@ -28,7 +28,7 @@ public class EmailPassword extends DocubricksServlet
 		{
 		try(DocubricksSite session=new DocubricksSite())
 			{
-			String toEmail=request.getParameter("email");
+			String toEmail=request.getParameter("email").trim();
 			RecordUser rec=session.getUserByEmail(toEmail);
 			String status="0";
 			if(rec!=null)

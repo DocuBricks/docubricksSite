@@ -28,10 +28,10 @@ public class EmailPasswordConfirm extends DocubricksServlet
 		{
 		try(DocubricksSite session=new DocubricksSite())
 			{
-			String uid=request.getParameter("uid");
+			String uid=request.getParameter("uid").trim();
 			String resetcode=request.getParameter("code").trim();
 			String newpass=request.getParameter("password").trim();
-			RecordUser rec=session.getUserByID(Integer.parseInt(uid.trim()));
+			RecordUser rec=session.getUserByID(Integer.parseInt(uid));
 			String status="0";
 			if(rec!=null)
 				{

@@ -86,34 +86,27 @@ public class GetDocumentList extends DocubricksServlet
 				q.setShowOnlyPublic();
 			
 			//Write all the simple variables
-			if(q!=null)
+			List<RecordDocument> docs=q.get(session);
+			JSONArray arr=new JSONArray();
+			for(RecordDocument d:docs)
 				{
-				List<RecordDocument> docs=q.get(session);
-				JSONArray arr=new JSONArray();
-				for(RecordDocument d:docs)
-					{
-					JSONObject ob=new JSONObject();
-					ob.put("id", ""+d.id); //Has to be a string since JS only has floating-point numbers
-					ob.put("created", ""+d.timeCreated);
-					ob.put("ownerid", d.documentOwnerID);
-					
-					ob.put("name", d.documentName);
-					ob.put("image", d.documentImage);
-					ob.put("description", d.documentDesc);
-					ob.put("tags", d.getTagListComma());
-					ob.put("ispublic", d.isPublic);
-					ob.put("isfrozen", d.isFrozen);
-					ob.put("shortlink", d.documentShortLink);
+				JSONObject ob=new JSONObject();
+				ob.put("id", ""+d.id); //Has to be a string since JS only has floating-point numbers
+				ob.put("created", ""+d.timeCreated);
+				ob.put("ownerid", d.documentOwnerID);
+				
+				ob.put("name", d.documentName);
+				ob.put("image", d.documentImage);
+				ob.put("description", d.documentDesc);
+				ob.put("tags", d.getTagListComma());
+				ob.put("ispublic", d.isPublic);
+				ob.put("isfrozen", d.isFrozen);
+				ob.put("shortlink", d.documentShortLink);
 
-					arr.add(ob);
-					}
-				response.setContentType("application/json");
-				response.getWriter().append(arr.toJSONString());
+				arr.add(ob);
 				}
-			else
-				{
-				throw new Exception("Error in query");
-				}
+			response.setContentType("application/json");
+			response.getWriter().append(arr.toJSONString());
 			}
 		catch (Exception e)
 			{

@@ -41,11 +41,12 @@ public class EditUser extends DocubricksServlet
 					RecordUser rec=session.getUserByID(uid);
 					if(rec!=null)
 						{
-						rec.firstName=request.getParameter("name");
-						rec.lastName=request.getParameter("surname");
-						rec.emailPrimary=request.getParameter("email");
-						if(!request.getParameter("password").equals(""))
-							rec.setPassword(request.getParameter("password"));
+						rec.firstName=request.getParameter("name").trim();
+						rec.lastName=request.getParameter("surname").trim();
+						rec.emailPrimary=request.getParameter("email").trim();
+						String newpass=request.getParameter("password").trim();
+						if(!newpass.equals(""))
+							rec.setPassword(newpass);
 						session.daoUser.update(rec);
 			    	retob.put("status","1");
 						}

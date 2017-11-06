@@ -46,11 +46,11 @@ public class CreateUser extends DocubricksServlet
 			else
 				{
 				RecordUser rec=new RecordUser();
-				rec.firstName=request.getParameter("name");
-				rec.lastName=request.getParameter("surname");
-				rec.emailPrimary=newEmail;
-				if(!request.getParameter("password").equals(""))
-					rec.setPassword(request.getParameter("password"));
+				rec.firstName=request.getParameter("name").trim();
+				rec.lastName=request.getParameter("surname").trim();
+				rec.emailPrimary=newEmail.trim();
+				String newpass=request.getParameter("password").trim();
+				rec.setPassword(newpass);
 				session.daoUser.create(rec);
 					
 				//Log in the new user
