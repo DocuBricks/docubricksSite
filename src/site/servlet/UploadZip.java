@@ -107,7 +107,9 @@ public class UploadZip extends DocubricksServlet
 	      	rec.documentXML=EvFileUtil.readFile(fileXML);
 	      	fileXML.delete();
 	      	
-	      	session.daoDocument.update(rec);
+	      	System.err.println("wheee!");
+	      	System.err.println("the doc "+rec.documentXML);
+	      	session.daoDocument.update(rec);  /////////////// benjamin kopek problem
 	  			retob.put("id", ""+rec.id);
 					response.getWriter().append(retob.toJSONString());
 	      	}
