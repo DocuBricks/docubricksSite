@@ -82,7 +82,8 @@ public class UploadZip extends DocubricksServlet
 	      		}
 	      	else
 	      		{
-		      	FileOutputStream fos = new FileOutputStream(f);
+	      		f.getParentFile().mkdirs();
+		      	FileOutputStream fos = new FileOutputStream(f);  // kopek problem 2
 		      	dest = new BufferedOutputStream(fos, BUFFER);
 		      	while ((count = zis.read(data, 0, BUFFER)) != -1) 
 		      		dest.write(data, 0, count);
@@ -109,7 +110,7 @@ public class UploadZip extends DocubricksServlet
 	      	
 	      	System.err.println("wheee!");
 	      	System.err.println("the doc "+rec.documentXML);
-	      	session.daoDocument.update(rec);  /////////////// benjamin kopek problem
+	      	session.daoDocument.update(rec);
 	  			retob.put("id", ""+rec.id);
 					response.getWriter().append(retob.toJSONString());
 	      	}

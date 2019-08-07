@@ -40,7 +40,7 @@ public class DocumentDirectory
 				if(o!=null)
 					return o;
 				}
-			else if(c.getName().endsWith(".docubricks.xml"))
+			else if(c.getName().endsWith(".docubricks.xml") && !c.getName().startsWith("."))
 				return c;
 			}
 		return null;
