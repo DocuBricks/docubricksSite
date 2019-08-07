@@ -23,6 +23,7 @@ public class GetDocumentXML extends DocubricksServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
+		response.setHeader("Access-Control-Allow-Origin","*");
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			String id=request.getParameter("id");

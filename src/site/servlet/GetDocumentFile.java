@@ -30,6 +30,7 @@ public class GetDocumentFile extends DocubricksServlet
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 		{
+		response.setHeader("Access-Control-Allow-Origin","*");
 		try(DocubricksSite session=new DocubricksSite())
 			{
 			String url=request.getRequestURI().toString();
@@ -66,7 +67,7 @@ public class GetDocumentFile extends DocubricksServlet
 	        File file = new File(dir.getRoot(), URLDecoder.decode(url, "UTF-8"));
 	        if(!file.exists()) 
 	        	{
-            response.sendError(HttpServletResponse.SC_NOT_FOUND); 
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,"Failed to find "); 
             return;
 	        	}
 	        if(!file.isFile())
